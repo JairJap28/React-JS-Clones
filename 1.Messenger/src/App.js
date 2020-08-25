@@ -3,6 +3,11 @@ import React, {
   useEffect
 } from 'react';
 import './App.css';
+import FlipMove from 'react-flip-move';
+
+// Firebase
+import firebase from "firebase";
+import db from './Firebase/firebase';
 
 // Components
 import Message from './Components/Chat/Message';
@@ -12,7 +17,6 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-
 
 function App() {
 
@@ -24,10 +28,24 @@ function App() {
     setUsername(prompt('Please enter your name'));
   }, []);
 
+  useEffect(() => {
+    db.collection('messages')
+    .orderBy('timestamp', 'asc')
+    .onSnapshot(snapshot => {
+      setMessages(snapshot.docs.map(doc => doc.data()))
+    })
+  }, []);
+
   const sendMessage = (event) => {
     // all the logic to send the message
     event.preventDefault();
-    setMessages([...messages, { username: username, text: input }]);
+
+    db.collection('messages').add({ 
+      username: username, 
+      message: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+
     setInput('');
   }
 
@@ -54,11 +72,13 @@ function App() {
 
       {/* messages themselves */}
 
-      {
-        messages.map(message => (
-          <Message username={message.username} text={message.text}/>
-        ))
-      }
+      <FlipMove>
+        {
+          messages.map(message => (
+            <Message username={username} message={message} />
+          ))
+        }
+      </FlipMove>
     </div>
   );
 }

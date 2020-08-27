@@ -11,25 +11,26 @@ import db from './Firebase/firebase';
 
 // Components
 import Message from './Components/Chat/Message';
+import CustomInput from './Components/Input/CustomInput';
 
 // MUI Stuff
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import IconButton from '@material-ui/core/IconButton';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
-// Icons
-import SendIcon from '@material-ui/icons/Send';
+const useStyles = makeStyles(() => ({
+  app__messages: {
+    height: '55vh',
+    overflow: 'auto'
+  }
+}));
 
-function App() {
-
+const App = () => {
+  const classes = useStyles();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    setUsername(prompt('Please enter your name'));
+    //setUsername(prompt('Please enter your name'));
   }, []);
 
   useEffect(() => {
@@ -55,32 +56,14 @@ function App() {
 
   return (
     <div className="App">
-      <img src="https://en.facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=100&h=100" alt="Messenger logo"/>
+      <img src="https://en.facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=64&h=64" alt="Messenger logo"/>
       <h1>Hello Force Of Code</h1>
 
-      <form className="app__form">
-        <FormControl className="app__formControl">
-          <Input 
-            placeholder="Enter a message..."
-            value={input} 
-            onChange={event => setInput(event.target.value)}
-            className="app__input"/>
-
-          <IconButton
-            variant="contained"
-            color="primary"
-            type='submit'
-            disabled={!input}
-            onClick={sendMessage}
-            className="app__iconButton">
-            <SendIcon />
-          </IconButton>
-        </FormControl>
-      </form>
+      <CustomInput/>
 
       {/* messages themselves */}
 
-      <FlipMove>
+      <FlipMove className={classes.app__messages}>
         {
           messages.map(({id, message}) => (
             <Message key={id} username={username} message={message} />

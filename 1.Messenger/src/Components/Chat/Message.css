@@ -14,3 +14,15 @@
 .message__guestCard {
     background-color: #e9e9e9 !important;
 }
+.message__username {
+    text-align: left;
+    font-weight: bold !important;
+}
+.message__cardContent {
+    padding: 10px !important;
+    text-align: left;
+}
+
+.message__cardContent:last-child {
+    padding-bottom: 10px !important;
+}

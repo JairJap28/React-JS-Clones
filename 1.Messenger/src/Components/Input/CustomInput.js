@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import useStyles from './Styles';
 
+// Firebase
+import firebase from "firebase";
+import db from '../../Firebase/firebase';
+
 // MUI Stuff
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
@@ -10,12 +14,20 @@ import Box from '@material-ui/core/Box';
 // Icons
 import SendIcon from '@material-ui/icons/Send';
 
-const CustomInput = () => {
+const CustomInput = ({ username }) => {
     const classes = useStyles();
     const [input, setInput] = useState('');
 
-    const sendMessage = () => {
+    const sendMessage = (event) => {
+        event.preventDefault();
 
+        db.collection('messages').add({
+            username: username,
+            message: input,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+
+        setInput('');
     }
 
     return (

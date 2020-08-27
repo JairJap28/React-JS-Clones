@@ -1,12 +1,12 @@
 import React, { 
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from 'react';
 import './App.css';
 import FlipMove from 'react-flip-move';
 
 // Firebase
-import firebase from "firebase";
 import db from './Firebase/firebase';
 
 // Components
@@ -28,10 +28,17 @@ const App = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState('');
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+  }
 
   useEffect(() => {
     //setUsername(prompt('Please enter your name'));
   }, []);
+
+  useEffect(scrollToBottom, [messages]);
 
   useEffect(() => {
     db.collection('messages')
@@ -40,19 +47,6 @@ const App = () => {
       setMessages(snapshot.docs.map(doc => ({ id: doc.id, message: doc.data() })))
     })
   }, []);
-
-  const sendMessage = (event) => {
-    // all the logic to send the message
-    event.preventDefault();
-
-    db.collection('messages').add({ 
-      username: username, 
-      message: input,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    })
-
-    setInput('');
-  }
 
   return (
     <div className="App">
@@ -63,13 +57,16 @@ const App = () => {
 
       {/* messages themselves */}
 
-      <FlipMove className={classes.app__messages}>
-        {
-          messages.map(({id, message}) => (
-            <Message key={id} username={username} message={message} />
-          ))
-        }
-      </FlipMove>
+      <div className={classes.app__messages}>
+        <FlipMove>
+          {
+            messages.map(({ id, message }) => (
+              <Message key={id} username={username} message={message} />
+            ))
+          }
+        </FlipMove>
+        <div ref={messagesEndRef} />
+      </div>
     </div>
   );
 }

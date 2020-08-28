@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import useStyles from './Styles';
 
+// Redux
+import { connect } from 'react-redux';
+import { sendMessage } from '../../Redux/Actions/MessageActions';
+
 // Firebase
 import firebase from "firebase";
-import db from '../../Firebase/firebase';
 
 // MUI Stuff
 import FormControl from '@material-ui/core/FormControl';
@@ -14,18 +17,19 @@ import Box from '@material-ui/core/Box';
 // Icons
 import SendIcon from '@material-ui/icons/Send';
 
-const CustomInput = ({ username }) => {
+const CustomInput = (props) => {
+    const { username } = props;
     const classes = useStyles();
     const [input, setInput] = useState('');
 
     const sendMessage = (event) => {
         event.preventDefault();
 
-        db.collection('messages').add({
+        props.sendMessage({
             username: username,
             message: input,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
+        });
 
         setInput('');
     }
@@ -58,4 +62,4 @@ const CustomInput = ({ username }) => {
     )
 };
 
-export default CustomInput;
+export default connect(null, { sendMessage })(CustomInput);

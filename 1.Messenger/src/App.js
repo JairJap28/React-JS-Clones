@@ -6,10 +6,16 @@ import React, {
 import './App.css';
 import FlipMove from 'react-flip-move';
 
+// Redux
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { firestoreConnect } from 'react-redux-firebase';
+
 // Firebase
 import db from './Firebase/firebase';
 
 // Components
+import Header from './Components/Header/Header';
 import Message from './Components/Chat/Message';
 import CustomInput from './Components/Input/CustomInput';
 
@@ -18,50 +24,36 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   app__messages: {
-    height: '55vh',
-    overflow: 'auto'
+    height: '70vh',
+    overflow: 'auto',
+    marginTop: 10,
+    marginBottom: 10
   }
 }));
 
-const App = () => {
+const App = (props) => {
   const classes = useStyles();
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [username, setUsername] = useState('');
+
+  const { ui } = props;
+  const { messages } = props;
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
   }
 
-  useEffect(() => {
-    //setUsername(prompt('Please enter your name'));
-  }, []);
-
   useEffect(scrollToBottom, [messages]);
-
-  useEffect(() => {
-    db.collection('messages')
-    .orderBy('timestamp', 'asc')
-    .onSnapshot(snapshot => {
-      setMessages(snapshot.docs.map(doc => ({ id: doc.id, message: doc.data() })))
-    })
-  }, []);
 
   return (
     <div className="App">
-      <img src="https://en.facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=64&h=64" alt="Messenger logo"/>
-      <h1>Hello Force Of Code</h1>
-
-      <CustomInput/>
-
-      {/* messages themselves */}
+      <Header />
+      <CustomInput username={ui.username}/>
 
       <div className={classes.app__messages}>
         <FlipMove>
           {
-            messages.map(({ id, message }) => (
-              <Message key={id} username={username} message={message} />
+            messages && messages.map((message) => (
+              <Message key={message.id} username={ui.username} message={message} />
             ))
           }
         </FlipMove>
@@ -71,4 +63,17 @@ const App = () => {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  ui: state.ui,
+  messages: state.firestore.ordered.messages
+});
+
+export default compose(
+  firestoreConnect(() => [
+    {
+      collection: 'messages',
+      orderBy: ['timestamp', 'asc']
+    }
+  ]),
+  connect(mapStateToProps, {})
+)(App);

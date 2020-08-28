@@ -2,8 +2,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
     message: {
-        padding: 10,
-        margin: 10,
+        padding: 5,
         width: 'fit-content'
     },
     message__user: {
@@ -22,11 +21,17 @@ const useStyles = makeStyles(() => ({
         fontWeight: 'bold !important',
     },
     message__cardContent: {
-        padding: '10px 10px 0 10px !important',
+        padding: props => props.isUser ? '5px 10px 10px 10px !important': '10px 10px 0 10px !important',
         textAlign: 'left',
         '&:last-child': {
             paddingBottom: 0,
         }
+    },
+    message__user__content: {
+        textAlign: 'right'
+    },
+    message__guest__content: {
+        textAlign: 'left'
     },
     message__cardActions: {
         padding: '0px 5px 5px !important'
@@ -37,12 +42,13 @@ const useStyles = makeStyles(() => ({
         color: '#636363'
     },
     message__time__user: {
-        textAlign: 'left',
-        marginRight: '20px !important'
+        textAlign: 'right',
+        marginLeft: '20 !important',
+        color: '#353131'
     },
     message__time__guess: {
         textAlign: 'right',
-        marginLeft: '20px !important'
+        marginRight: '20 !important'
     }
 }));
 

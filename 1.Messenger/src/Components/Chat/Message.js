@@ -9,11 +9,19 @@ import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 
 const Message = forwardRef(({ username, message }, ref) => {
-    const classes = useStyles();
     const isUser = username === message.username;
+    const classes = useStyles({ isUser });
+    const [showHour, setShowHour] = React.useState(false);
+
+    const changeHourVisibility = () => {
+        setShowHour(!showHour);
+    }
+
     return (
         <div ref={ref} className={`${classes.message} ${isUser && classes.message__user}`}>
-            <Card className={isUser ? classes.message__userCard : classes.message__guestCard}>
+            <Card 
+                onClick={changeHourVisibility}
+                className={isUser ? classes.message__userCard : classes.message__guestCard}>
                 <CardContent className={classes.message__cardContent}>
                     <Typography 
                         variant="body2"
@@ -21,11 +29,14 @@ const Message = forwardRef(({ username, message }, ref) => {
                         {!isUser && `${message.username} says: `}
                     </Typography>
                     <Typography
-                        variant="body1">
+                        variant="body1"
+                        className={isUser ? classes.message__user__content: classes.message__guest__content}>
                         {message.message}
                     </Typography>
                 </CardContent>
-                <CardActions className={classes.message__cardActions}>
+                <CardActions 
+                    style={{ display: showHour ? 'block': 'none' }}
+                    className={classes.message__cardActions}>
                     <Typography 
                         className={`${classes.message__time} ${isUser ? classes.message__time__user: classes.message__time__guess}`}>
                         {moment(message.timestamp?.toDate()).fromNow()}

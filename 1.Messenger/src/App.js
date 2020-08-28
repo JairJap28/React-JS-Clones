@@ -18,6 +18,7 @@ import db from './Firebase/firebase';
 import Header from './Components/Header/Header';
 import Message from './Components/Chat/Message';
 import CustomInput from './Components/Input/CustomInput';
+import ChatSkeleton from './Components/Layout/ChatSkeleton';
 
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -50,13 +51,17 @@ const App = (props) => {
       <CustomInput username={ui.username}/>
 
       <div className={classes.app__messages}>
-        <FlipMove>
-          {
-            messages && messages.map((message) => (
-              <Message key={message.id} username={ui.username} message={message} />
-            ))
-          }
-        </FlipMove>
+        {messages ? (
+          <FlipMove>
+            {
+              messages && messages.map((message) => (
+                <Message key={message.id} username={ui.username} message={message} />
+              ))
+            }
+          </FlipMove>
+        ) : (
+            <ChatSkeleton />
+        )}
         <div ref={messagesEndRef} />
       </div>
     </div>

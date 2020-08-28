@@ -9,15 +9,14 @@ const useStyles = makeStyles(() => ({
     },
     header__input__username: {
         padding: '5px 10px 10px 10px !important',
-        background: 'white'
-    },
-    header__label__username: {
-        top: '-',
-        left: '-'
     },
     header__iconButton: {
         backgroundColor: '#00AAFD !important',
-        color: '#fff !important'
+        color: '#fff !important',
+        padding: '5px !important',
+        borderWidth: props => props.isUser ? null : '2px !important',
+        borderStyle: props => props.isUser ? null : 'solid !important',
+        borderColor: props => props.isUser ? null : 'red !important'
     }
 }));
 

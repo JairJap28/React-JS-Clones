@@ -8,7 +8,7 @@ const ChatSkeleton = () => {
         <div>
             {
                 [...Array(6).keys()].map(item => (
-                    <Message />
+                    <Message key={item}/>
                 ))
             }
         </div>

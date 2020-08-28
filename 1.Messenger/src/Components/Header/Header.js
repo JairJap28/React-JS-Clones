@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import useStyles from './Styles';
 
 // Redux
@@ -23,7 +23,7 @@ const Header = (props) => {
     const imgLogo = "https://en.facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=54&h=54";
 
     const [username, setUsername] = React.useState('');
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
 
     const classes = useStyles({ isUser: Boolean(username) });
 
@@ -47,7 +47,12 @@ const Header = (props) => {
 
     return (
         <Fragment>
-            <Dialog open={open} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
+            <Dialog 
+                open={open} 
+                disableBackdropClick
+                disableEscapeKeyDown
+                onClose={handleCloseDialog} 
+                aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Username</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

@@ -1,5 +1,4 @@
 import React, { 
-  useState,
   useEffect,
   useRef
 } from 'react';
@@ -10,9 +9,6 @@ import FlipMove from 'react-flip-move';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase';
-
-// Firebase
-import db from './Firebase/firebase';
 
 // Components
 import Header from './Components/Header/Header';

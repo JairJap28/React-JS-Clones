@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 
 const Message = forwardRef(({ username, message }, ref) => {
-    const isUser = username === message?.username;
+    const isUser = username === message?.username && username;
     const classes = useStyles({ isUser });
     const [showHour, setShowHour] = React.useState(false);
 
@@ -31,7 +31,7 @@ const Message = forwardRef(({ username, message }, ref) => {
                             {!isUser && `${message.username} says: `}
                         </Typography>
                     ) :(
-                        <Skeleton variant="text" />
+                        <Skeleton variant="text" width={110 + Math.floor(Math.random() * Math.floor(90))}/>
                     )}
                     { message ? (
                         <Typography

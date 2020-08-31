@@ -4,9 +4,24 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+// Redux
+import { Provider } from 'react-redux';
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+import store, { rrfProps } from './Redux/Store';
+
+// Firebase
+import { firebaseConfig } from './Firebase/Firebase';
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider
+        firebase={firebaseConfig}
+        config={rrfProps}
+        dispatch={store.dispatch}>
+        <App />
+      </ReactReduxFirebaseProvider>  
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

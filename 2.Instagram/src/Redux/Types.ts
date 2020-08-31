@@ -1,0 +1,1 @@
+export const FIREBASE_GET_POSTS = "FIREBASE_GET_POSTS";

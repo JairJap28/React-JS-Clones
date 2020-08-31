@@ -1,5 +1,23 @@
 import createMuiTheme  from '@material-ui/core/styles/createMuiTheme';
 
+declare module "@material-ui/core/styles/createMuiTheme" {
+    interface Theme {
+        custom: {
+            border: {
+                type1: string;
+            };
+        }
+    }
+    // allow configuration using `createMuiTheme`
+    interface ThemeOptions {
+        custom?: {
+            border?: {
+                type1?: string;
+            };
+        };
+    }
+}
+
 const theme = createMuiTheme({
     palette: {
         common: {
@@ -8,7 +26,12 @@ const theme = createMuiTheme({
         },
         background: {
             default: '#fafafa'
-        }
+        },
+    },
+    custom: {
+        border: {
+            type1: '1px solid lightgray'
+        } 
     }
 });
 

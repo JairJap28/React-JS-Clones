@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     signUp__containerButton: {
         marginTop: 15
+    },
+    signUp__formControl: {
+        marginTop: 5
     }
 }));
 

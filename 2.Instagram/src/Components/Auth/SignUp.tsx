@@ -42,15 +42,6 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                 
                 console.log(authUser);
                 setFirebaseUser(authUser);
-
-                if(authUser.displayName) {
-
-                } else {
-                    return authUser.updateProfile({
-                        displayName: user.username
-                    });
-                }
-
             } else {
                 // User has log out
             }
@@ -75,6 +66,11 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
 
         auth
         .createUserWithEmailAndPassword(user.email, user.password)
+        .then((authUser: firebase.auth.UserCredential) => {
+            return authUser.user?.updateProfile({
+                displayName: user.username
+            });
+        })
         .catch((error: any) => alert(error.message));
     }
 
@@ -95,8 +91,8 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                             />
                         </Box>
                         <Box>
-                            <Box>
-                                <FormControl fullWidth>
+                            <Box m={1}>
+                                <FormControl fullWidth className={classes.signUp__formControl}>
                                     <InputLabel>Username</InputLabel>
                                     <Input
                                         type="text"
@@ -106,8 +102,8 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                                     />
                                 </FormControl>
                             </Box>
-                            <Box>
-                                <FormControl fullWidth>
+                            <Box m={1}>
+                                <FormControl fullWidth className={classes.signUp__formControl}>
                                     <InputLabel>Email</InputLabel>
                                     <Input
                                         type="email"
@@ -117,8 +113,8 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                                     />
                                 </FormControl>
                             </Box>
-                            <Box>
-                                <FormControl fullWidth>
+                            <Box m={1}>
+                                <FormControl>
                                     <InputLabel>Password</InputLabel>
                                     <Input
                                         type="password"

@@ -4,6 +4,7 @@ import theme from './Config/Layout/Theme';
 
 // Models
 import { IPost } from './Models/IPost';
+import { User as FirebaseUser } from 'firebase';
 
 // Firebase
 import { db } from './Firebase/Firebase';
@@ -12,6 +13,10 @@ import { db } from './Firebase/Firebase';
 import Header from './Components/Header/Header';
 import Post from './Components/Posts/Post';
 import SignUp from './Components/Auth/SignUp';
+
+// Redux
+import { RootState } from './Redux/Store/index';
+import { connect } from 'react-redux';
 
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -28,10 +33,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const App: React.FC<{}> = () => {
+type AppProps = {
+  user?: FirebaseUser
+}
+
+const App: React.FC<AppProps> = (props) => {
   const classes = useStyles();
   const [posts, setPosts] = useState<Array<IPost>>([]);
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const { user } = props;
 
   useEffect(() => {
     db.collection('posts').onSnapshot(snapshot => {
@@ -76,4 +86,8 @@ const App: React.FC<{}> = () => {
   );
 }
 
-export default App;
+const mapStateToProps = (state: RootState): AppProps => ({
+  user: state.system.user
+});
+
+export default connect(mapStateToProps, {})(App);

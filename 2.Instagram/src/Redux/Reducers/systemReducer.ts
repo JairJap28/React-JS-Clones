@@ -7,7 +7,6 @@ import {
 import ISystemState from '../../Models/ISystemState';
 
 const initialState: ISystemState = {
-    user: null
 };
 
 function systemReducer(

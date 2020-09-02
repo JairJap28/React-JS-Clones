@@ -9,6 +9,10 @@ import ISignUpProps from './ISignUpProps';
 import { auth } from '../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 
+// Redux
+import { connect } from 'react-redux';
+import { logInSuccess } from '../../Redux/Actions/systemActions';
+
 // MUI Stuff
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
@@ -42,6 +46,7 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                 
                 console.log(authUser);
                 setFirebaseUser(authUser);
+                props.logInSuccess(authUser);
             } else {
                 // User has log out
             }
@@ -142,4 +147,6 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
     )
 };
 
-export default SignUp;
+const mapDispatchToProps = { logInSuccess };
+
+export default connect(null, mapDispatchToProps)(SignUp);

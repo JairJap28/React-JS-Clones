@@ -13,10 +13,16 @@ import { db } from './Firebase/Firebase';
 import Header from './Components/Header/Header';
 import Post from './Components/Posts/Post';
 import SignUp from './Components/Auth/SignUp';
+import SnackBar from './Components/Layout/SnackBar/SnackBar';
 
 // Redux
 import { RootState } from './Redux/Store/index';
 import { connect } from 'react-redux';
+import { 
+  logOut,
+  changeOpenHelper
+} from './Redux/Actions/systemActions';
+import { SystemActionTypes } from './Redux/Types';
 
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -34,14 +40,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 type AppProps = {
-  user?: FirebaseUser
+  user?: FirebaseUser,
+  open: boolean,
+  logOut: () => SystemActionTypes | undefined,
+  changeOpenHelper: (state: boolean) => SystemActionTypes | undefined
 }
 
 const App: React.FC<AppProps> = (props) => {
   const classes = useStyles();
   const [posts, setPosts] = useState<Array<IPost>>([]);
-  const [open, setOpen] = useState<boolean>(false);
-  const { user } = props;
+  const [ user, setUser ] = useState<FirebaseUser | undefined>();
 
   useEffect(() => {
     db.collection('posts').onSnapshot(snapshot => {
@@ -56,20 +64,32 @@ const App: React.FC<AppProps> = (props) => {
     })
   }, []);
 
+  useEffect(() => {
+    setUser(props.user);
+  }, [props]);
+
   const handleOpen = () => {
-    setOpen(true);
+    props.changeOpenHelper(true);
+  }
+
+  const handleSingOut = () => {
+    props.logOut();
   }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-
-      <SignUp open={open}/>
+      <SnackBar />
+      <SignUp />
 
       <div className={`App ${classes.app}`}>
         <Header />
 
-        <Button onClick={handleOpen}>Sign Up</Button>
+        { !Boolean(user) ? (
+          <Button onClick={handleOpen}>Sign Up</Button> 
+        ): (
+          <Button onClick={handleSingOut}>Log Out</Button> 
+        )}
 
         <div className={classes.app__posts}>
           { posts && posts.map((post: IPost) => (
@@ -86,8 +106,14 @@ const App: React.FC<AppProps> = (props) => {
   );
 }
 
-const mapStateToProps = (state: RootState): AppProps => ({
-  user: state.system.user
+const mapStateToProps = (state: RootState) => ({
+  user: state.system.user,
+  open: state.system.open || false
 });
 
-export default connect(mapStateToProps, {})(App);
+const mapActionsToProps = {
+  logOut,
+  changeOpenHelper
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(App);

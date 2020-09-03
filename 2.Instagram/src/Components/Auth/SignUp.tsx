@@ -11,7 +11,12 @@ import { User as FirebaseUser } from 'firebase';
 
 // Redux
 import { connect } from 'react-redux';
-import { logInSuccess } from '../../Redux/Actions/systemActions';
+import { 
+    logInSuccess,
+    snackError,
+    changeOpenHelper
+} from '../../Redux/Actions/systemActions';
+import { RootState } from '../../Redux/Store/index';
 
 // MUI Stuff
 import Modal from '@material-ui/core/Modal';
@@ -34,7 +39,7 @@ function getModalStyle() {
 
 const SignUp: React.FC<ISignUpProps> = (props) => {
     const classes = useStyles();
-    const [open, setOpen] = useState<boolean>(props.open);
+    const [open, setOpen] = useState<boolean>(false);
     const [modalStyle] = React.useState(getModalStyle);
     const [user, setUser] = React.useState<IUserLogin>({ email: '', password: '', username: '' });
     const [firebaseUser, setFirebaseUser] = React.useState<FirebaseUser | null>(null);
@@ -43,23 +48,22 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
         const unsubscribe = auth.onAuthStateChanged((authUser: FirebaseUser | null ) => {
             if(authUser) {
                 // User has log in
-                
-                console.log(authUser);
                 setFirebaseUser(authUser);
                 props.logInSuccess(authUser);
             } else {
                 // User has log out
             }
         });
-
+        setOpen(props.open);
         return () => {
             // Perform some cleanup actions
             unsubscribe();
         }
-    }, [firebaseUser, user.username]);
+    }, [firebaseUser, props, user.username]);
 
     const handleClose = () => {
         setOpen(false);
+        props.changeOpenHelper(false);
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +80,7 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                 displayName: user.username
             });
         })
-        .catch((error: any) => alert(error.message));
+        .catch((error: any) => props.snackError(error.message));
     }
 
     return (
@@ -119,7 +123,7 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                                 </FormControl>
                             </Box>
                             <Box m={1}>
-                                <FormControl>
+                                <FormControl fullWidth className={classes.signUp__formControl}>
                                     <InputLabel>Password</InputLabel>
                                     <Input
                                         type="password"
@@ -147,6 +151,14 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
     )
 };
 
-const mapDispatchToProps = { logInSuccess };
+const mapStateToProps = (state: RootState) => ({
+    open: state.system.open || false
+});
 
-export default connect(null, mapDispatchToProps)(SignUp);
+const mapDispatchToProps = {
+    logInSuccess,
+    snackError,
+    changeOpenHelper
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

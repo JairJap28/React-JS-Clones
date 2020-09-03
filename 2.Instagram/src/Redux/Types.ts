@@ -1,13 +1,40 @@
+// Models
 import { User as FirebaseUser } from 'firebase';
+import { ISnackBarProps } from '../Models/UI/ISnackBar';
 
+// UI
+export const SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
+export const OPEN_HELPER = "OPEN_HELPER";
+export const CLEAR_UI = "CLEAR_UI";
+
+// Firebase
 export const FIREBASE_GET_POSTS = "FIREBASE_GET_POSTS";
-
-// Auth
 export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
+export const LOG_OUT = "LOG_OUT";
 
 interface LogInSuccessfully {
     type: typeof LOG_IN_SUCCESS,
     payload: FirebaseUser
 };
 
-export type SystemActionTypes = LogInSuccessfully;
+interface LogOut {
+    type: typeof LOG_OUT
+}
+
+interface SnackBarMessage {
+    type: typeof SNACKBAR_MESSAGE,
+    payload: ISnackBarProps
+};
+
+interface OpenHelper {
+    type: typeof OPEN_HELPER,
+    payload: boolean
+}
+
+interface ClearUI {
+    type: typeof CLEAR_UI
+}
+
+export type SystemActionTypes = LogInSuccessfully 
+    | SnackBarMessage | LogOut | OpenHelper
+    | ClearUI;

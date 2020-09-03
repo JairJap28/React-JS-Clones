@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import useStyles from './Styles';
 
 // Models
-import { IUserLogin } from '../../Models/IUserLogin';
-import ISignUpProps from './ISignUpProps';
+import { IUserLogin } from '../../../Models/IUserLogin';
+import ISignUpProps, {
+    ISignUpStateToProps,
+    ISignUpActionsToProps
+} from './ISignUpProps';
 
 // Firebase
-import { auth } from '../../Firebase/Firebase';
+import { auth } from '../../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 
 // Redux
@@ -15,8 +18,8 @@ import {
     logInSuccess,
     snackError,
     changeOpenHelper
-} from '../../Redux/Actions/systemActions';
-import { RootState } from '../../Redux/Store/index';
+} from '../../../Redux/Actions/systemActions';
+import { RootState } from '../../../Redux/Store/index';
 
 // MUI Stuff
 import Modal from '@material-ui/core/Modal';
@@ -38,6 +41,7 @@ function getModalStyle() {
 }
 
 const SignUp: React.FC<ISignUpProps> = (props) => {
+    const displayName = 'SignUp';
     const classes = useStyles();
     const [open, setOpen] = useState<boolean>(false);
     const [modalStyle] = React.useState(getModalStyle);
@@ -54,16 +58,19 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
                 // User has log out
             }
         });
-        setOpen(props.open);
         return () => {
             // Perform some cleanup actions
             unsubscribe();
         }
-    }, [firebaseUser, props, user.username]);
+    }, [firebaseUser, user.username]);
+
+    useEffect(() => {
+        setOpen(props.open.component === displayName && props.open.open);
+    }, [props]);
 
     const handleClose = () => {
         setOpen(false);
-        props.changeOpenHelper(false);
+        props.changeOpenHelper(false, '');
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,11 +158,11 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
     )
 };
 
-const mapStateToProps = (state: RootState) => ({
-    open: state.system.open || false
+const mapStateToProps = (state: RootState): ISignUpStateToProps => ({
+    open: state.system.open || { open: false, component: '' }
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps: ISignUpActionsToProps = {
     logInSuccess,
     snackError,
     changeOpenHelper

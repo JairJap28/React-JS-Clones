@@ -11,10 +11,13 @@ import {
     SystemActionTypes
 } from '../Types';
 
-export function changeOpenHelper(state: boolean): SystemActionTypes {
+export function changeOpenHelper(state: boolean, component: string): SystemActionTypes {
     return {
         type: OPEN_HELPER,
-        payload: state
+        payload: {
+            open: state,
+            component
+        }
     }
 }
 

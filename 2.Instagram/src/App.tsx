@@ -12,7 +12,8 @@ import { db } from './Firebase/Firebase';
 // Components
 import Header from './Components/Header/Header';
 import Post from './Components/Posts/Post';
-import SignUp from './Components/Auth/SignUp';
+import SignUp from './Components/Auth/SignUp/SignUp';
+import SignIn from './Components/Auth/SignIn/SignIn';
 import SnackBar from './Components/Layout/SnackBar/SnackBar';
 
 // Redux
@@ -43,7 +44,7 @@ type AppProps = {
   user?: FirebaseUser,
   open: boolean,
   logOut: () => SystemActionTypes | undefined,
-  changeOpenHelper: (state: boolean) => SystemActionTypes | undefined
+  changeOpenHelper: (state: boolean, component: string) => SystemActionTypes | undefined
 }
 
 const App: React.FC<AppProps> = (props) => {
@@ -68,8 +69,14 @@ const App: React.FC<AppProps> = (props) => {
     setUser(props.user);
   }, [props]);
 
-  const handleOpen = () => {
-    props.changeOpenHelper(true);
+  const handleOpenSignUp = () => {
+    let name = SignUp.displayName?.replace('Connect(', '').replace(')', '');
+    props.changeOpenHelper(true, name || '');
+  }
+
+  const handleOpenSignIn = () => {
+    let name = SignIn.displayName?.replace('Connect(', '').replace(')', '');
+    props.changeOpenHelper(true, name || '');
   }
 
   const handleSingOut = () => {
@@ -80,13 +87,17 @@ const App: React.FC<AppProps> = (props) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackBar />
+      <SignIn />
       <SignUp />
 
       <div className={`App ${classes.app}`}>
         <Header />
 
         { !Boolean(user) ? (
-          <Button onClick={handleOpen}>Sign Up</Button> 
+          <div>
+            <Button onClick={handleOpenSignIn}>Sign In</Button>
+            <Button onClick={handleOpenSignUp}>Sign Up</Button>
+          </div>
         ): (
           <Button onClick={handleSingOut}>Log Out</Button> 
         )}
@@ -108,7 +119,7 @@ const App: React.FC<AppProps> = (props) => {
 
 const mapStateToProps = (state: RootState) => ({
   user: state.system.user,
-  open: state.system.open || false
+  open: state.system.open?.open || false
 });
 
 const mapActionsToProps = {

@@ -1,6 +1,7 @@
 // Models
 import { User as FirebaseUser } from 'firebase';
 import { ISnackBarProps } from '../Models/UI/ISnackBar';
+import IOpenHelper from '../Models/UI/IOpenHelper';
 
 // UI
 export const SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
@@ -28,7 +29,7 @@ interface SnackBarMessage {
 
 interface OpenHelper {
     type: typeof OPEN_HELPER,
-    payload: boolean
+    payload: IOpenHelper
 }
 
 interface ClearUI {

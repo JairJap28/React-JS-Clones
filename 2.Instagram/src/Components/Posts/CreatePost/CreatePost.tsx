@@ -4,13 +4,16 @@ import useStyles from './Styles';
 // Redux
 import { connect } from 'react-redux';
 import { RootState } from '../../../Redux/Store/index';
-import { changeOpenHelper } from '../../../Redux/Actions/systemActions';
+import { 
+    changeOpenHelper,
+    snackError
+} from '../../../Redux/Actions/systemActions';
 
 // Firebase
+import firebase from 'firebase';
 import { db, storage } from '../../../Firebase/Firebase';
 
 // Models
-import IOpenHelper from '../../../Models/UI/IOpenHelper';
 import ICreatePost, {
     ICreateStateToProps,
     ICreateActionsToProps    
@@ -22,12 +25,15 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import TextField from '@material-ui/core/TextField';
 
 const CreatePost: React.FC<ICreatePost> = (props) => {
     const classes = useStyles();
     const [caption, setCaption] = useState<string>('');
     const [image, setImage] = useState<any>(null);
-    const [progress, setProgress] = useState<0>(0);
+    const [progress, setProgress] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
 
     useEffect(() => {
@@ -46,6 +52,31 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
 
     const handleUpload = () => {
         const uploadTask = storage.ref(`images/${image.name}`).put(image);
+        uploadTask.on("state_changed", (snapshot: firebase.storage.UploadTaskSnapshot) => {
+            const progress = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            setProgress(progress);
+        }, (error: Error) => {
+            console.log(error);
+            props.snackError(error.message);
+        }, () => {
+            storage.ref("images")
+            .child(image.name)
+            .getDownloadURL()
+            .then((url: string) => {
+                db.collection("posts").add({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    caption,
+                    imageUrl: url,
+                    username: props.username
+                });
+
+                setProgress(0);
+                setCaption('');
+                setImage(null);
+            });
+        });
     }
 
     const handleClose = () => {
@@ -55,7 +86,7 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
     }
 
     return (
-        <Dialog open={open}>
+        <Dialog open={open} maxWidth="sm" fullWidth>
             <div className={classes.create__title}>
                 <Typography variant="h5">
                     Let the world...
@@ -65,17 +96,30 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
                 </Typography>
             </div>
             <DialogContent>
-                <div>
-                    <h1>abc</h1>
-                    <input 
-                        type="text" 
-                        placeholder="Enter a caption..."
-                        onChange={handleOnChange}
-                        value={caption}/>
-                    <input 
-                        type="file"
-                        onChange={handleFileChange}/>
-                </div>
+                <Box display="flex" flexDirection="column">
+                    <Box>
+                        <LinearProgress 
+                            variant="determinate" 
+                            value={progress} 
+                            className={classes.create__progressBar}/>
+                    </Box>
+                    <Box>
+                        <TextField
+                            label="Caption"
+                            multiline
+                            rowsMax={2}
+                            fullWidth
+                            variant="filled"
+                            onChange={handleOnChange}
+                            value={caption}
+                            className={classes.create__caption}/>
+                    </Box>
+                    <Box>
+                        <input 
+                            type="file"
+                            onChange={handleFileChange}/>
+                    </Box>
+                </Box>
             </DialogContent>
             <DialogActions>
                 <Button 
@@ -89,7 +133,7 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
                     fullWidth
                     color="primary"
                     variant="contained"
-                    onClick={handleClose}>
+                    onClick={handleUpload}>
                     Publish
                 </Button>
             </DialogActions>
@@ -98,11 +142,13 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ICreateStateToProps => ({
-    open: state.system.open || { open: false, component: '' }
+    open: state.system.open || { open: false, component: '' },
+    username: state.system.user?.displayName || ''
 })
 
 const mapDispatchToProps: ICreateActionsToProps = {
-    changeOpenHelper
+    changeOpenHelper,
+    snackError
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreatePost)

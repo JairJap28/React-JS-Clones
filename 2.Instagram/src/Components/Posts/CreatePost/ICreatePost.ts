@@ -2,10 +2,12 @@ import IOpenHelper from '../../../Models/UI/IOpenHelper';
 import { SystemActionTypes } from '../../../Redux/Types';
 
 export interface ICreateStateToProps {
-    open: IOpenHelper
+    open: IOpenHelper,
+    username: string
 }
 
 export interface ICreateActionsToProps {
+    snackError: (message: string) => SystemActionTypes,
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes;
 }
 

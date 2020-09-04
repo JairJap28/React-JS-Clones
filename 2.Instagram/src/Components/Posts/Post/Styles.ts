@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: ICustomTheme) => ({
     },
     post__image: {
         width: '100%',
+        maxHeight: 450,
         objectFit: 'contain',
         borderTop: theme.custom.border.type1,
         borderBottom: theme.custom.border.type1

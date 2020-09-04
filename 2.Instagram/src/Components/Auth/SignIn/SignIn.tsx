@@ -70,6 +70,7 @@ const SignIn: React.FC<ISignInProps> = (props) => {
 
     const handleClose = () => {
         setOpen(false);
+        setUser({username: '', email: '', password: ''});
         props.changeOpenHelper(false, '');
     }
 
@@ -81,11 +82,9 @@ const SignIn: React.FC<ISignInProps> = (props) => {
         event.preventDefault();
 
         auth
-        .createUserWithEmailAndPassword(user.email, user.password)
-        .then((authUser: firebase.auth.UserCredential) => {
-            return authUser.user?.updateProfile({
-                displayName: user.username
-            });
+        .signInWithEmailAndPassword(user.email, user.password)
+        .then(() => {
+            handleClose();
         })
         .catch((error: any) => props.snackError(error.message));
     }

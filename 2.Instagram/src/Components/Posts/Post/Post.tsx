@@ -7,6 +7,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 const Post: React.FC<IPostProps> = (props) => {
     const classes = useStyles();
+    
     return (
         <div className={classes.post}>
             <div className={classes.post__header}>

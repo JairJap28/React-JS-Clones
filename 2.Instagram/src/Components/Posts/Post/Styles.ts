@@ -1,6 +1,7 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import { ICustomTheme } from '../../../Config/Layout/Theme';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: ICustomTheme) => ({
     post: {
         minWidth: 350,
         maxWidth: 760,

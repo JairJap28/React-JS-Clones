@@ -24,6 +24,9 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
     const classes = useStyles();
     const [state, setState] = React.useState<ISnackBarProps>({});
 
+    const vertical = 'top';
+    const horizontal = 'right';
+
     useEffect(() => {
         setState({
             open: props.open,
@@ -33,17 +36,18 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
     }, [props]);
     
     const handleClose = (event: React.SyntheticEvent<any, Event>, reason: SnackbarCloseReason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
         props.clearUI();
     };
 
     
     return (
         <div className={classes.root}>
-            <Snackbar open={state.open} autoHideDuration={3000} onClose={handleClose}>
+            <Snackbar 
+                open={state.open}
+                autoHideDuration={2000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical, horizontal }}
+                key={vertical + horizontal}>
                 <Alert onClose={handleClose} severity={state.severity || "info"}>
                     {state.message}
                 </Alert>

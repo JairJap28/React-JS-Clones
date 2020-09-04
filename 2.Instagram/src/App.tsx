@@ -11,10 +11,11 @@ import { db } from './Firebase/Firebase';
 
 // Components
 import Header from './Components/Header/Header';
-import Post from './Components/Posts/Post';
+import Post from './Components/Posts/Post/Post';
 import SignUp from './Components/Auth/SignUp/SignUp';
 import SignIn from './Components/Auth/SignIn/SignIn';
 import SnackBar from './Components/Layout/SnackBar/SnackBar';
+import CreatePost from './Components/Posts/CreatePost/CreatePost';
 
 // Redux
 import { RootState } from './Redux/Store/index';
@@ -83,12 +84,18 @@ const App: React.FC<AppProps> = (props) => {
     props.logOut();
   }
 
+  const handleCreatePost = () => {
+    let name = CreatePost.displayName?.replace('Connect(', '').replace(')', '');
+    props.changeOpenHelper(true, name || '');
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackBar />
       <SignIn />
       <SignUp />
+      <CreatePost />
 
       <div className={`App ${classes.app}`}>
         <Header />
@@ -99,7 +106,10 @@ const App: React.FC<AppProps> = (props) => {
             <Button onClick={handleOpenSignUp}>Sign Up</Button>
           </div>
         ): (
-          <Button onClick={handleSingOut}>Log Out</Button> 
+          <div>
+            <Button onClick={handleSingOut}>Log Out</Button>
+            <Button onClick={handleCreatePost}>Create</Button> 
+          </div>
         )}
 
         <div className={classes.app__posts}>

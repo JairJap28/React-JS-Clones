@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { 
     logInSuccess,
     snackError,
+    snackSuccess,
     changeOpenHelper
 } from '../../../Redux/Actions/systemActions';
 import { RootState } from '../../../Redux/Store/index';
@@ -83,6 +84,9 @@ const SignUp: React.FC<ISignUpProps> = (props) => {
         auth
         .createUserWithEmailAndPassword(user.email, user.password)
         .then((authUser: firebase.auth.UserCredential) => {
+            props.changeOpenHelper(false, '');
+            props.snackSuccess('You have been register successfully');
+            setUser({ username: '', password: '', email: ''});
             return authUser.user?.updateProfile({
                 displayName: user.username
             });
@@ -165,6 +169,7 @@ const mapStateToProps = (state: RootState): ISignUpStateToProps => ({
 const mapDispatchToProps: ISignUpActionsToProps = {
     logInSuccess,
     snackError,
+    snackSuccess,
     changeOpenHelper
 };
 

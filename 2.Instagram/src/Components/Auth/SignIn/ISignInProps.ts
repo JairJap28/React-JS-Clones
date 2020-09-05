@@ -9,6 +9,7 @@ export interface ISignInMapToProps {
 export interface ISignInActionToProps {
     logInSuccess: (user: FirebaseUser) => SystemActionTypes,
     snackError: (message: string) => SystemActionTypes,
+    snackSuccess: (message: string) => SystemActionTypes,
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes
 }
 

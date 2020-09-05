@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import theme from './Config/Layout/Theme';
+import InstagramEmbed from 'react-instagram-embed';
 
 // Models
 import { IPost } from './Models/IPost';
@@ -29,15 +30,22 @@ import { SystemActionTypes } from './Redux/Types';
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline'
-import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles(() => ({
   app: {
-      height: '100vh'
+      
+  },
+  app__header: {
+    position: 'sticky',
+    width: '100%',
+    top: 0,
+    zIndex: 1
   },
   app__posts: {
-    marginTop: 45
+    padding: 10
   },
 }));
 
@@ -51,7 +59,6 @@ type AppProps = {
 const App: React.FC<AppProps> = (props) => {
   const classes = useStyles();
   const [posts, setPosts] = useState<Array<IPost>>([]);
-  const [ user, setUser ] = useState<FirebaseUser | undefined>();
 
   useEffect(() => {
     db.collection('posts')
@@ -68,28 +75,7 @@ const App: React.FC<AppProps> = (props) => {
     })
   }, []);
 
-  useEffect(() => {
-    setUser(props.user);
-  }, [props]);
-
-  const handleOpenSignUp = () => {
-    let name = SignUp.displayName?.replace('Connect(', '').replace(')', '');
-    props.changeOpenHelper(true, name || '');
-  }
-
-  const handleOpenSignIn = () => {
-    let name = SignIn.displayName?.replace('Connect(', '').replace(')', '');
-    props.changeOpenHelper(true, name || '');
-  }
-
-  const handleSingOut = () => {
-    props.logOut();
-  }
-
-  const handleCreatePost = () => {
-    let name = CreatePost.displayName?.replace('Connect(', '').replace(')', '');
-    props.changeOpenHelper(true, name || '');
-  }
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -100,30 +86,46 @@ const App: React.FC<AppProps> = (props) => {
       <CreatePost />
 
       <div className={`App ${classes.app}`}>
-        <Header />
-
-        { !Boolean(user) ? (
-          <div>
-            <Button onClick={handleOpenSignIn}>Sign In</Button>
-            <Button onClick={handleOpenSignUp}>Sign Up</Button>
-          </div>
-        ): (
-          <div>
-            <Button onClick={handleSingOut}>Log Out</Button>
-            <Button onClick={handleCreatePost}>Create</Button> 
-          </div>
-        )}
-
-        <div className={classes.app__posts}>
-          { posts && posts.map((post: IPost) => (
-            <Post
-              key={post.id}
-              username={post.username}
-              caption={post.caption}
-              imageUrl={post.imageUrl}
-            />
-          )) }
+        <div className={classes.app__header}>
+          <Header />
         </div>
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100vh">
+          <div className={classes.app__posts}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={8}>
+                {posts && posts.map((post: IPost) => (
+                  <Post
+                    key={post.id}
+                    postId={post.id}
+                    username={post.username}
+                    caption={post.caption}
+                    imageUrl={post.imageUrl}
+                    loggedUser={props.user?.displayName || ''}
+                  />
+                ))}
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <InstagramEmbed
+                  url='https://www.instagram.com/p/BsPEvaDAxiR/?utm_source=ig_web_copy_link'
+                  hideCaption={false}
+                  containerTagName='div'
+                  protocol=''
+                  onLoading={() => { }}
+                  onSuccess={() => { }}
+                  onAfterRender={() => { }}
+                  onFailure={() => { }}
+                />
+              </Grid>
+            </Grid>
+          </div>
+        </Box>
+
+        
       </div>
     </ThemeProvider>
   );

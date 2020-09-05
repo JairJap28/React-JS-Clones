@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { 
     logInSuccess,
     snackError,
+    snackSuccess,
     changeOpenHelper
 } from '../../../Redux/Actions/systemActions';
 import { RootState } from '../../../Redux/Store/index';
@@ -85,6 +86,7 @@ const SignIn: React.FC<ISignInProps> = (props) => {
         .signInWithEmailAndPassword(user.email, user.password)
         .then(() => {
             handleClose();
+            props.snackSuccess('Logged In Successfully');
         })
         .catch((error: any) => props.snackError(error.message));
     }
@@ -153,6 +155,7 @@ const mapStateToProps = (state: RootState): ISignInMapToProps => ({
 const mapDispatchToProps: ISignInActionToProps = {
     logInSuccess,
     snackError,
+    snackSuccess,
     changeOpenHelper
 };
 

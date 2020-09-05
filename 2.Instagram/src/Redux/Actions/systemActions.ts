@@ -35,12 +35,24 @@ export function logInSuccess(user: FirebaseUser): SystemActionTypes {
 };
 
 export function snackError(message: string): SystemActionTypes {
+    return snack(message, "error");
+}
+
+export function snackInfo(message: string): SystemActionTypes {
+    return snack(message, "info");
+}
+
+export function snackSuccess(message: string): SystemActionTypes {
+    return snack(message, "success");
+}
+
+function snack(message: string, type: string): SystemActionTypes {
     return {
         type: SNACKBAR_MESSAGE,
         payload: {
             message,
             open: true,
-            severity: "error"
+            severity: type
         }
     };
 }

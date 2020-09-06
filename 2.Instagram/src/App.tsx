@@ -47,6 +47,9 @@ const useStyles = makeStyles(() => ({
   app__posts: {
     padding: 10
   },
+  app__embed: {
+    overflow: 'auto'
+  }
 }));
 
 type AppProps = {
@@ -69,7 +72,8 @@ const App: React.FC<AppProps> = (props) => {
           id: doc.id,
           caption: doc.data().caption,
           imageUrl: doc.data().imageUrl,
-          username: doc.data().username
+          username: doc.data().username,
+          timestamp: doc.data().timestamp
         };
       }));
     })
@@ -105,12 +109,14 @@ const App: React.FC<AppProps> = (props) => {
                     username={post.username}
                     caption={post.caption}
                     imageUrl={post.imageUrl}
+                    time={post.timestamp}
                     loggedUser={props.user?.displayName || ''}
                   />
                 ))}
               </Grid>
               <Grid item xs={12} sm={4}>
                 <InstagramEmbed
+                  className={classes.app__embed}
                   url='https://www.instagram.com/p/BsPEvaDAxiR/?utm_source=ig_web_copy_link'
                   hideCaption={false}
                   containerTagName='div'

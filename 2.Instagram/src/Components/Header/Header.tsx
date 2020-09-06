@@ -20,6 +20,7 @@ import {
 // MUI Stuff
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 const Header: React.FC<IHeaderPost> = (props) => {
     const classes = useStyles();
@@ -47,32 +48,36 @@ const Header: React.FC<IHeaderPost> = (props) => {
     }
 
     return (
-        <Box 
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
+        <div
             className={classes.header__main}>
-            <Box flexGrow={1}>
-                <img 
-                    src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
-                    className={classes.header__img__logo}
-                    alt="Instagram Logo"
-                />
+            <Box 
+                display="flex"
+                flexDirection="row"
+                justifyContent="center"
+                justifyItems="center"
+                className={classes.header__container}>
+                <Box flexGrow={1}>
+                    <img
+                        src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+                        className={classes.header__img__logo}
+                        alt="Instagram Logo"
+                    />
+                </Box>
+                <Box >
+                    {!Boolean(user) ? (
+                        <div>
+                            <Button onClick={handleOpenSignIn}>Sign In</Button>
+                            <Button onClick={handleOpenSignUp}>Sign Up</Button>
+                        </div>
+                    ) : (
+                            <div>
+                                <Button onClick={handleCreatePost}>Create</Button>
+                                <Button onClick={handleSingOut}>Log Out</Button>
+                            </div>
+                        )}
+                </Box>
             </Box>
-            <Box>
-                {!Boolean(user) ? (
-                    <div>
-                        <Button onClick={handleOpenSignIn}>Sign In</Button>
-                        <Button onClick={handleOpenSignUp}>Sign Up</Button>
-                    </div>
-                ) : (
-                    <div>
-                        <Button onClick={handleSingOut}>Log Out</Button>
-                        <Button onClick={handleCreatePost}>Create</Button>
-                    </div>
-                )}
-            </Box>
-        </Box>
+        </div>
     )
 };
 

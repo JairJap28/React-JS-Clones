@@ -9,6 +9,7 @@ import { db } from '../../../Firebase/Firebase';
 // Models
 import { IPostProps } from './IPostProps';
 import IComment from '../../../Models/IComment';
+import ILike from '../../../Models/ILike';
 
 // Components
 import Comment from '../Comment/Comment';
@@ -32,12 +33,15 @@ import BookmarkIcon from '@material-ui/icons/Bookmark';
 const Post: React.FC<IPostProps> = (props) => {
     const classes = useStyles();
     const [comments, setComments] = useState<Array<IComment>>([]);
+    const [likes, setLikes] = useState<Array<ILike>>([]);
     const [comment, setComment] = useState<string>('');
+    const [likedByUser, setLikeByUSer] = useState<string | undefined>('');
 
     useEffect(() => {
-        let unsubscribe: any = null;
+        let unsubscribeComments: any = null;
+        let unsubscribeLikes: any = null;
         if(props.postId) {
-            unsubscribe = db
+            unsubscribeComments = db
             .collection('posts')
             .doc(props.postId)
             .collection('comments')
@@ -51,12 +55,32 @@ const Post: React.FC<IPostProps> = (props) => {
                     };
                 }));
             });
+
+            unsubscribeLikes = db
+            .collection('posts')
+            .doc(props.postId)
+            .collection('likes')
+            .orderBy('timestamp', 'asc')
+            .onSnapshot(snapshot => {
+                setLikes(snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        username: doc.data().username,
+                        timestamp: doc.data().timestamp
+                    };
+                }));
+            });
         }
 
         return () => {
-            unsubscribe();
+            unsubscribeComments();
+            unsubscribeLikes();
         }
     }, [props.postId]);
+
+    useEffect(() => {
+        setLikeByUSer(likes.find(item => item.username === props.loggedUser)?.id);
+    }, [likes, props.loggedUser]);
     
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setComment(event.target.value);
@@ -74,6 +98,25 @@ const Post: React.FC<IPostProps> = (props) => {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         setComment('');
+    }
+
+    const controlLikeChange = () => {
+        if(likedByUser) {
+            db
+            .collection('posts')
+            .doc(props.postId)
+            .collection('likes')
+            .doc(likedByUser).delete();
+        } else {
+            db
+            .collection('posts')
+            .doc(props.postId)
+            .collection('likes')
+            .add({
+                username: props.loggedUser,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
     }
 
     return (
@@ -105,8 +148,12 @@ const Post: React.FC<IPostProps> = (props) => {
             <Box display="flex" flexDirection="row">
                 <Box display="flex" flexDirection="row" flexGrow={1}>
                     <Box>
-                        <IconButton>
-                            <FavoriteBorderIcon />
+                        <IconButton onClick={controlLikeChange}>
+                            { likedByUser ? (
+                                <FavoriteIcon className={classes.post__likes__liked}/>
+                            ): (
+                                <FavoriteBorderIcon />
+                            ) }
                         </IconButton>
                     </Box>
                     <Box>
@@ -121,7 +168,10 @@ const Post: React.FC<IPostProps> = (props) => {
                     </IconButton>
                 </Box>
             </Box>
-
+            <div className={classes.post__likes}>
+                <strong>{likes.length} {likes.length === 1 ? 'like':  'likes'}</strong>
+            </div>
+            
             <h4 className={classes.post__text}>
                 <strong>{props.username}</strong> {props.caption}
             </h4>

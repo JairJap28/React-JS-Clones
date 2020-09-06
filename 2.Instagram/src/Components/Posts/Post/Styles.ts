@@ -33,6 +33,12 @@ const useStyles = makeStyles((theme: ICustomTheme) => ({
     post__form__comment: {
         borderTop: theme.custom.border.type1
     },
+    post__likes: {
+        paddingLeft: 20
+    },
+    post__likes__liked: {
+        color: 'red'
+    },
     post__text: {
         fontWeight: 'normal',
         padding: '10px 15px 10px 20px'

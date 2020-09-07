@@ -6,8 +6,14 @@ import moment from 'moment';
 import firebase from 'firebase';
 import { db } from '../../../Firebase/Firebase';
 
+// Redux
+import { connect } from 'react-redux';
+import { snackInfo } from '../../../Redux/Actions/systemActions';
+
 // Models
-import { IPostProps } from './IPostProps';
+import IPostProps, {
+    IPostActionToProps
+} from './IPostProps';
 import IComment from '../../../Models/IComment';
 import ILike from '../../../Models/ILike';
 
@@ -101,21 +107,25 @@ const Post: React.FC<IPostProps> = (props) => {
     }
 
     const controlLikeChange = () => {
-        if(likedByUser) {
-            db
-            .collection('posts')
-            .doc(props.postId)
-            .collection('likes')
-            .doc(likedByUser).delete();
+        if(props.loggedUser){
+            if(likedByUser) {
+                db
+                .collection('posts')
+                .doc(props.postId)
+                .collection('likes')
+                .doc(likedByUser).delete();
+            } else {
+                db
+                .collection('posts')
+                .doc(props.postId)
+                .collection('likes')
+                .add({
+                    username: props.loggedUser,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
         } else {
-            db
-            .collection('posts')
-            .doc(props.postId)
-            .collection('likes')
-            .add({
-                username: props.loggedUser,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            props.snackInfo('You have to log in to like any post');
         }
     }
 
@@ -213,4 +223,8 @@ const Post: React.FC<IPostProps> = (props) => {
     )
 }
 
-export default Post;
+const mapActionsToProps: IPostActionToProps = {
+    snackInfo
+}
+
+export default connect(null, mapActionsToProps)(Post);

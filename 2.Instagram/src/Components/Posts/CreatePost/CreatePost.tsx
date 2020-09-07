@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import useStyles from './Styles';
 
+// Import React FilePond
+import { FilePond, registerPlugin } from 'react-filepond';
+
+// Import FilePond styles
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
 // Redux
 import { connect } from 'react-redux';
 import { RootState } from '../../../Redux/Store/index';
@@ -29,12 +38,16 @@ import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TextField from '@material-ui/core/TextField';
 
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+
 const CreatePost: React.FC<ICreatePost> = (props) => {
     const classes = useStyles();
     const [caption, setCaption] = useState<string>('');
-    const [image, setImage] = useState<any>(null);
     const [progress, setProgress] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
+    const [files, setFiles] = useState<Array<any>>([]);
+
+    const ref: React.RefObject<FilePond> = React.useRef<FilePond>(null);
 
     useEffect(() => {
         setOpen(props.open.component === 'CreatePost' && props.open.open);
@@ -44,13 +57,8 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
         setCaption(event.target.value);
     }
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if(event.target.files && event.target.files[0]) {
-            setImage(event.target.files[0]);
-        }
-    }
-
     const handleUpload = () => {
+        let image = files[0].file;
         const uploadTask = storage.ref(`images/${image.name}`).put(image);
         uploadTask.on("state_changed", (snapshot: firebase.storage.UploadTaskSnapshot) => {
             const progress = Math.round(
@@ -74,14 +82,20 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
 
                 setProgress(0);
                 setCaption('');
-                setImage(null);
+                handleRemoveFile();
+                props.changeOpenHelper(false, '');
             });
         });
     }
 
+    const handleRemoveFile = () => {
+        setFiles([]);
+        ref.current?.removeFiles();
+    }
+
     const handleClose = () => {
         setCaption('');
-        setImage(null);
+        handleRemoveFile();
         props.changeOpenHelper(false, '');
     }
 
@@ -104,20 +118,28 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
                             className={classes.create__progressBar}/>
                     </Box>
                     <Box>
+                        <FilePond
+                            ref={ref =>  ref}
+                            files={files}
+                            onupdatefiles={setFiles}
+                            allowMultiple={false}
+                            name="files"
+                            labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                            onremovefile={handleRemoveFile}
+                        />
+                    </Box>
+                    <Box>
                         <TextField
                             label="Caption"
                             multiline
-                            rowsMax={2}
+                            rowsMax={4}
                             fullWidth
                             variant="filled"
                             onChange={handleOnChange}
                             value={caption}
-                            className={classes.create__caption}/>
-                    </Box>
-                    <Box>
-                        <input 
-                            type="file"
-                            onChange={handleFileChange}/>
+                            className={classes.create__caption}
+                            InputProps={{disableUnderline: true}}
+                            />
                     </Box>
                 </Box>
             </DialogContent>
@@ -125,14 +147,14 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
                 <Button 
                     fullWidth
                     color="secondary"
-                    variant="contained"
+                    variant="outlined"
                     onClick={handleClose}>
                     Cancel
                 </Button>
                 <Button 
                     fullWidth
                     color="primary"
-                    variant="contained"
+                    variant="outlined"
                     onClick={handleUpload}>
                     Publish
                 </Button>

@@ -24,8 +24,8 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
     const classes = useStyles();
     const [state, setState] = React.useState<ISnackBarProps>({});
 
-    const vertical = 'top';
-    const horizontal = 'right';
+    const vertical = 'bottom';
+    const horizontal = 'center';
 
     useEffect(() => {
         setState({

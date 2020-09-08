@@ -21,11 +21,16 @@ import CreatePost from './Components/Posts/CreatePost/CreatePost';
 // Redux
 import { RootState } from './Redux/Store/index';
 import { connect } from 'react-redux';
-import { 
-  logOut,
+import {
   changeOpenHelper
 } from './Redux/Actions/systemActions';
-import { SystemActionTypes } from './Redux/Types';
+import {
+  logOut
+} from './Redux/Actions/firebaseActions';
+import { 
+  SystemActionTypes, 
+  FirebaseActionTypes 
+} from './Redux/Types';
 
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -55,7 +60,7 @@ const useStyles = makeStyles(() => ({
 type AppProps = {
   user?: FirebaseUser,
   open: boolean,
-  logOut: () => SystemActionTypes | undefined,
+  logOut: () => FirebaseActionTypes | undefined,
   changeOpenHelper: (state: boolean, component: string) => SystemActionTypes | undefined
 }
 
@@ -138,7 +143,7 @@ const App: React.FC<AppProps> = (props) => {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.system.user,
+  user: state.firebase.user,
   open: state.system.open?.open || false
 });
 

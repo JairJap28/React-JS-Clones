@@ -10,6 +10,7 @@ export const CLEAR_UI = "CLEAR_UI";
 
 // Firebase
 export const FIREBASE_GET_POSTS = "FIREBASE_GET_POSTS";
+export const FIREBASE_GET_COMMENTS = "FIREBASE_GET_COMMENTS";
 export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
 export const LOG_OUT = "LOG_OUT";
 
@@ -36,6 +37,13 @@ interface ClearUI {
     type: typeof CLEAR_UI
 }
 
-export type SystemActionTypes = LogInSuccessfully 
-    | SnackBarMessage | LogOut | OpenHelper
-    | ClearUI;
+interface IComments {
+    type: typeof FIREBASE_GET_COMMENTS,
+    payload: Array<{id: string, text: string, username: string}>
+}
+
+export type SystemActionTypes =  SnackBarMessage 
+    | OpenHelper | ClearUI;
+
+export type FirebaseActionTypes = LogInSuccessfully
+    | LogOut | IComments;

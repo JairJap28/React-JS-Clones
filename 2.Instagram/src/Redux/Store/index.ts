@@ -10,9 +10,11 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 // Reducers
 import systemReducer from '../Reducers/systemReducer';
+import firebaseReducer from '../Reducers/firebaseReducer';
 
 const rootReducer = combineReducers({
-    system: systemReducer
+    system: systemReducer,
+    firebase: firebaseReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

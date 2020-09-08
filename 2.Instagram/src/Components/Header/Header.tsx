@@ -11,11 +11,13 @@ import { User as FirebaseUser } from 'firebase';
 // Redux
 import { RootState } from '../../Redux/Store/index';
 import { connect } from 'react-redux';
-import { 
-    logOut,
+import {
     snackInfo,
     changeOpenHelper
 } from '../../Redux/Actions/systemActions';
+import {
+    logOut
+} from '../../Redux/Actions/firebaseActions';
 
 // MUI Stuff
 import Button from '@material-ui/core/Button';
@@ -82,7 +84,7 @@ const Header: React.FC<IHeaderPost> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): IHeaderStateToProps => ({
-    user: state.system.user,
+    user: state.firebase.user,
 });
 
 const mapActionToProps: IHeaderActionsToProps = {

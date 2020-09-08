@@ -9,17 +9,22 @@ import ISignInProps,{
 } from './ISignInProps';
 
 // Firebase
-import { auth } from '../../../Firebase/Firebase';
+import { 
+    auth,
+    db
+} from '../../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 
 // Redux
 import { connect } from 'react-redux';
-import { 
-    logInSuccess,
+import {
     snackError,
     snackSuccess,
     changeOpenHelper
 } from '../../../Redux/Actions/systemActions';
+import {
+    logInSuccess
+} from '../../../Redux/Actions/firebaseActions';
 import { RootState } from '../../../Redux/Store/index';
 
 // MUI Stuff
@@ -55,6 +60,16 @@ const SignIn: React.FC<ISignInProps> = (props) => {
                 // User has log in
                 setFirebaseUser(authUser);
                 props.logInSuccess(authUser);
+
+                db
+                .collection('users')
+                .doc(authUser.uid)
+                .onSnapshot((snapshot: any) => {
+                    let user = {
+                        username: snapshot.docs[0].data().username
+                    };
+
+                });
             } else {
                 // User has log out
             }
@@ -63,7 +78,7 @@ const SignIn: React.FC<ISignInProps> = (props) => {
             // Perform some cleanup actions
             unsubscribe();
         }
-    }, [firebaseUser, user.username]);
+    }, [firebaseUser, props, user.username]);
 
     useEffect(() => {
         setOpen(props.open.component === displayName && props.open.open);

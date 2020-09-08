@@ -42,10 +42,12 @@ const Post: React.FC<IPostProps> = (props) => {
     const [likes, setLikes] = useState<Array<ILike>>([]);
     const [comment, setComment] = useState<string>('');
     const [likedByUser, setLikeByUSer] = useState<string | undefined>('');
+    const [savedByUser, setSavedByUser] = useState<string | undefined>('');
 
     useEffect(() => {
         let unsubscribeComments: any = null;
         let unsubscribeLikes: any = null;
+        let unsubscribeSave: any = null;
         if(props.postId) {
             unsubscribeComments = db
             .collection('posts')
@@ -76,13 +78,26 @@ const Post: React.FC<IPostProps> = (props) => {
                     };
                 }));
             });
+
+            unsubscribeSave = db
+            .collection('posts')
+            .doc(props.postId)
+            .collection('saved')
+            .where('username', '==', props.loggedUser)
+            .onSnapshot(snapshot => {
+                let auxSaved = snapshot.docs.map(doc => {
+                    return doc.id;
+                });
+                setSavedByUser(auxSaved[0]);
+            });
         }
 
         return () => {
             unsubscribeComments();
             unsubscribeLikes();
+            unsubscribeSave();
         }
-    }, [props.postId]);
+    }, [props.loggedUser, props.postId]);
 
     useEffect(() => {
         setLikeByUSer(likes.find(item => item.username === props.loggedUser)?.id);
@@ -126,6 +141,29 @@ const Post: React.FC<IPostProps> = (props) => {
             }
         } else {
             props.snackInfo('You have to log in to like any post');
+        }
+    }
+
+    const controlSaveChange = () => {
+        if(props.loggedUser){
+            if(savedByUser) {
+                db
+                .collection('posts')
+                .doc(props.postId)
+                .collection('saved')
+                .doc(savedByUser).delete();
+            } else {
+                db
+                .collection('posts')
+                .doc(props.postId)
+                .collection('saved')
+                .add({
+                    username: props.loggedUser,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        } else {
+            props.snackInfo('You have to log in to save any post');
         }
     }
 
@@ -173,8 +211,12 @@ const Post: React.FC<IPostProps> = (props) => {
                     </Box>
                 </Box>
                 <Box>
-                    <IconButton>
-                        <BookmarkBorderIcon />
+                    <IconButton onClick={controlSaveChange}>
+                        { savedByUser ? (
+                            <BookmarkIcon />
+                        ): (
+                            <BookmarkBorderIcon />
+                        ) }
                     </IconButton>
                 </Box>
             </Box>

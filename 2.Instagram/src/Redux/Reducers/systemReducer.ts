@@ -28,16 +28,6 @@ function systemReducer(
                 ...state,
                 snackbar: action.payload
             };
-        case LOG_IN_SUCCESS:
-            return {
-                ...state,
-                user: action.payload
-            };
-        case LOG_OUT:
-            return  {
-                ...state,
-                user: undefined
-            };
         case OPEN_HELPER:
             return {
                 ...state,

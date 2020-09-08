@@ -165,7 +165,7 @@ const CreatePost: React.FC<ICreatePost> = (props) => {
 
 const mapStateToProps = (state: RootState): ICreateStateToProps => ({
     open: state.system.open || { open: false, component: '' },
-    username: state.system.user?.displayName || ''
+    username: state.firebase.user?.displayName || ''
 })
 
 const mapDispatchToProps: ICreateActionsToProps = {

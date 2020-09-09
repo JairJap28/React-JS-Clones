@@ -60,16 +60,6 @@ const SignIn: React.FC<ISignInProps> = (props) => {
                 // User has log in
                 setFirebaseUser(authUser);
                 props.logInSuccess(authUser);
-
-                db
-                .collection('users')
-                .doc(authUser.uid)
-                .onSnapshot((snapshot: any) => {
-                    let user = {
-                        username: snapshot.docs[0].data().username
-                    };
-
-                });
             } else {
                 // User has log out
             }
@@ -78,7 +68,7 @@ const SignIn: React.FC<ISignInProps> = (props) => {
             // Perform some cleanup actions
             unsubscribe();
         }
-    }, [firebaseUser, props, user.username]);
+    }, [firebaseUser, user.username]);
 
     useEffect(() => {
         setOpen(props.open.component === displayName && props.open.open);

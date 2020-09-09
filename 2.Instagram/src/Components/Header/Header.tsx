@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import useStyles from './Styles';
 
 // Models
@@ -22,11 +22,19 @@ import {
 // MUI Stuff
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
+// Icons
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import AddIcon from '@material-ui/icons/Add';
 
 const Header: React.FC<IHeaderPost> = (props) => {
     const classes = useStyles();
     const [ user, setUser ] = useState<FirebaseUser | undefined>();
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [open, setOpen] = React.useState<boolean>(false);
 
     useEffect(() => {
         setUser(props.user);
@@ -48,6 +56,14 @@ const Header: React.FC<IHeaderPost> = (props) => {
     const handleCreatePost = () => {
         props.changeOpenHelper(true, 'CreatePost');
     }
+
+    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <div
@@ -72,10 +88,39 @@ const Header: React.FC<IHeaderPost> = (props) => {
                             <Button onClick={handleOpenSignUp}>Sign Up</Button>
                         </div>
                     ) : (
-                            <div>
-                                <Button onClick={handleCreatePost}>Create</Button>
-                                <Button onClick={handleSingOut}>Log Out</Button>
-                            </div>
+                            <Box display="flex" flexDirection="row">
+                                <IconButton onClick={handleCreatePost}>
+                                    <AddIcon />
+                                </IconButton>
+                                <div>
+                                    <IconButton
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        onClick={handleMenu}
+                                        color="inherit">
+                                        <AccountCircle />
+                                    </IconButton>
+                                    <Menu
+                                        open={open}
+                                        onClose={handleClose}
+                                        PaperProps={{
+                                            className: classes.header__menu
+                                        }}
+                                        MenuListProps={{
+                                            className: classes.header__menu__items
+                                        }}>
+
+                                        <MenuItem
+                                            onClick={handleClose}>
+                                            Saved
+                                        </MenuItem>
+                                        <MenuItem onClick={handleSingOut}>
+                                            Log Out
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Box>
                         )}
                 </Box>
             </Box>

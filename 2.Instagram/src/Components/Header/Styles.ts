@@ -13,28 +13,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         maxWidth: 1000,
         margin: 'auto'
-    },
-    header__img__logo:{
-        
-    },
-    header__menu: {
-        width: 150,
-        position: 'relative',
-        overflow: 'visible !important',
-        '&::before': {
-            content: "''",
-            width: 15,
-            height: 15,
-            background: 'white',
-            position: 'absolute',
-            top: -8,
-            right: 53,
-            borderTop: theme.custom.border.type1,
-            borderLeft: theme.custom.border.type1,
-            transform: 'rotate(45deg)',
-        }
-    },
-    header__menu__items:{
     }
 }));
 

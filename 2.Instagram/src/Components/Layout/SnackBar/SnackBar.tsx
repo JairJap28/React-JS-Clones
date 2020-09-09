@@ -48,7 +48,7 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
                 onClose={handleClose}
                 anchorOrigin={{ vertical, horizontal }}
                 key={vertical + horizontal}>
-                <Alert onClose={handleClose} severity={state.severity || "info"}>
+                <Alert onClose={handleClose} severity={state.severity}>
                     {state.message}
                 </Alert>
             </Snackbar>

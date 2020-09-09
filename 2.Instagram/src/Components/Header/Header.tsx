@@ -20,24 +20,63 @@ import {
 } from '../../Redux/Actions/firebaseActions';
 
 // MUI Stuff
+import withStyles from '@material-ui/core/styles/withStyles';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
+import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 
 // Icons
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+
+const StyledMenu = withStyles((theme) => ({
+    paper: {
+        border: '1px solid #d3d4d5',
+        width: 150,
+        position: 'relative',
+        overflow: 'visible !important',
+        '&::before': {
+            content: "''",
+            width: 15,
+            height: 15,
+            background: 'white',
+            position: 'absolute',
+            top: -8,
+            right: 53,
+            borderTop: theme.custom.border.type1,
+            borderLeft: theme.custom.border.type1,
+            transform: 'rotate(45deg)',
+        }
+    },
+}), { withTheme: true } )((props: MenuProps) => (
+    <Menu
+        {...props}
+    />
+));
+
+const StyledMenuItem = withStyles((theme) => ({
+    root: {
+        
+    },
+}))(MenuItem);
+
 
 const Header: React.FC<IHeaderPost> = (props) => {
     const classes = useStyles();
     const [ user, setUser ] = useState<FirebaseUser | undefined>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [open, setOpen] = React.useState<boolean>(false);
+    const open = Boolean(anchorEl) && Boolean(user);
 
     useEffect(() => {
         setUser(props.user);
+        setAnchorEl(null);
     }, [props]);
 
     const handleOpenSignUp = () => {
@@ -58,11 +97,11 @@ const Header: React.FC<IHeaderPost> = (props) => {
     }
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setOpen(true);
+        setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
-        setOpen(false);
+        setAnchorEl(null);
     };
 
     return (
@@ -77,7 +116,6 @@ const Header: React.FC<IHeaderPost> = (props) => {
                 <Box flexGrow={1}>
                     <img
                         src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
-                        className={classes.header__img__logo}
                         alt="Instagram Logo"
                     />
                 </Box>
@@ -101,24 +139,35 @@ const Header: React.FC<IHeaderPost> = (props) => {
                                         color="inherit">
                                         <AccountCircle />
                                     </IconButton>
-                                    <Menu
+                                    <StyledMenu
+                                        id="simple-menu"
                                         open={open}
                                         onClose={handleClose}
-                                        PaperProps={{
-                                            className: classes.header__menu
+                                        anchorEl={anchorEl}
+                                        getContentAnchorEl={null}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
                                         }}
-                                        MenuListProps={{
-                                            className: classes.header__menu__items
-                                        }}>
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                        keepMounted>
 
-                                        <MenuItem
-                                            onClick={handleClose}>
-                                            Saved
-                                        </MenuItem>
-                                        <MenuItem onClick={handleSingOut}>
-                                            Log Out
-                                        </MenuItem>
-                                    </Menu>
+                                        <StyledMenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <BookmarkBorderIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Saved" />
+                                        </StyledMenuItem>
+                                        <StyledMenuItem onClick={handleSingOut}>
+                                            <ListItemIcon>
+                                                <ExitToAppIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Log Out" />
+                                        </StyledMenuItem>
+                                    </StyledMenu>
                                 </div>
                             </Box>
                         )}

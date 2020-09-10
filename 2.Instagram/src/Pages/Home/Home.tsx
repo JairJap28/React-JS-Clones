@@ -14,11 +14,7 @@ import HomeProps, {
 import { db } from '../../Firebase/Firebase';
 
 // Components
-import Header from '../../Components/Header/Header';
 import Post from '../../Components/Posts/Post/Post';
-import SignUp from '../../Components/Auth/SignUp/SignUp';
-import SignIn from '../../Components/Auth/SignIn/SignIn';
-import SnackBar from '../../Components/Layout/SnackBar/SnackBar';
 import CreatePost from '../../Components/Posts/CreatePost/CreatePost';
 
 // Redux
@@ -62,22 +58,16 @@ const Home: React.FC<HomeProps> = (props) => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <SnackBar />
-            <SignIn />
-            <SignUp />
             <CreatePost />
 
-            <div className={`App ${classes.app}`}>
-                <div className={classes.app__header}>
-                    <Header />
-                </div>
+            <div>
 
                 <Box
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     minHeight="100vh">
-                    <div className={classes.app__posts}>
+                    <div className={classes.home__posts}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={8}>
                                 {posts && posts.map((post: IPost) => (
@@ -94,7 +84,7 @@ const Home: React.FC<HomeProps> = (props) => {
                             </Grid>
                             <Grid item xs={12} sm={4}>
                                 <InstagramEmbed
-                                    className={classes.app__embed}
+                                    className={classes.home__embed}
                                     url='https://www.instagram.com/p/BsPEvaDAxiR/?utm_source=ig_web_copy_link'
                                     hideCaption={false}
                                     containerTagName='div'

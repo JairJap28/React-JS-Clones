@@ -11,7 +11,6 @@ import ISignInProps,{
 // Firebase
 import { 
     auth,
-    db
 } from '../../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 
@@ -49,7 +48,7 @@ function getModalStyle() {
 const SignIn: React.FC<ISignInProps> = (props) => {
     const displayName = 'SignIn';
     const classes = useStyles();
-    const [open, setOpen] = useState<boolean>(props.open.component === displayName && props.open.open);
+    const [open, setOpen] = useState<boolean>(false);
     const [modalStyle] = React.useState(getModalStyle);
     const [user, setUser] = React.useState<IUserLogin>({ email: '', password: '', username: '' });
     const [firebaseUser, setFirebaseUser] = React.useState<FirebaseUser | null>(null);
@@ -69,6 +68,10 @@ const SignIn: React.FC<ISignInProps> = (props) => {
             unsubscribe();
         }
     }, [firebaseUser, user.username]);
+
+    useEffect(() => {
+        setOpen(props.open.component === displayName && props.open.open);
+    }, [props]);
 
     const handleClose = () => {
         setOpen(false);

@@ -1,7 +1,6 @@
 // Models
 import { 
-    auth,
-    db
+    auth
 } from '../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 

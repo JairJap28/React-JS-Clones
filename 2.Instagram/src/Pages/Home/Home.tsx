@@ -47,7 +47,9 @@ const Home: React.FC<HomeProps> = (props) => {
                         caption: doc.data().caption,
                         imageUrl: doc.data().imageUrl,
                         username: doc.data().username,
-                        timestamp: doc.data().timestamp
+                        timestamp: doc.data().timestamp,
+                        likes: doc.data().likes || 0,
+                        comments: doc.data().likes || 0
                     };
                 }));
             })
@@ -73,12 +75,15 @@ const Home: React.FC<HomeProps> = (props) => {
                                 {posts && posts.map((post: IPost) => (
                                     <Post
                                         key={post.id}
-                                        postId={post.id}
+                                        id={post.id}
                                         username={post.username}
                                         caption={post.caption}
                                         imageUrl={post.imageUrl}
-                                        time={post.timestamp}
+                                        timestamp={post.timestamp}
+                                        likes={post.likes}
+                                        comments={post.comments}
                                         loggedUser={props.user?.displayName || ''}
+                                        userUid={props.user?.uid || ''}
                                     />
                                 ))}
                             </Grid>

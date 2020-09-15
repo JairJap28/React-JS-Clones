@@ -8,21 +8,9 @@ import SnackBar from './Components/Layout/SnackBar/SnackBar';
 import SignIn from './Components/Auth/SignIn/SignIn';
 import SignUp from './Components/Auth/SignUp/SignUp';
 
-// Pages
-import Home from './Pages/Home/Home';
-import Saved from './Pages/Saved/Saved';
-
 // Router
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom';
-import {
-  HOME,
-  SAVED,
-  LANDING
-} from './Config/Route/Routes';
+import routes from './Components/Routes/Routes';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 // MUI Stuff
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -44,17 +32,14 @@ const App: React.FC<{}> = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackBar />
-      <SignIn />
-      <SignUp />
-      <div className={classes.app__header}>
-        <Header />
-      </div>
       <Router>
-        <Switch>
-          <Route path={HOME} ><Home /></Route>
-          <Route path={SAVED} ><Saved /></Route>
-          <Route path={LANDING}><Home /></Route>
-        </Switch>
+        <SignIn />
+        <SignUp />
+        <div className={classes.app__header}>
+          <Header />
+        </div>
+
+        {routes}
       </Router>
     </ThemeProvider>
   );

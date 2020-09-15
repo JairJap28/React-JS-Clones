@@ -15,7 +15,6 @@ import IPostProps, {
     IPostActionToProps
 } from './IPostProps';
 import IComment from '../../../Models/IComment';
-import ILike from '../../../Models/ILike';
 
 // Components
 import Comment from '../Comment/Comment';
@@ -39,19 +38,18 @@ import BookmarkIcon from '@material-ui/icons/Bookmark';
 const Post: React.FC<IPostProps> = (props) => {
     const classes = useStyles();
     const [comments, setComments] = useState<Array<IComment>>([]);
-    const [likes, setLikes] = useState<Array<ILike>>([]);
+    const [like, setLike] = useState<boolean>(false);
     const [comment, setComment] = useState<string>('');
-    const [likedByUser, setLikeByUSer] = useState<string | undefined>('');
-    const [savedByUser, setSavedByUser] = useState<string | undefined>('');
+    const [save, setSave] = useState<boolean>(false);
 
     useEffect(() => {
         let unsubscribeComments: any = null;
         let unsubscribeLikes: any = null;
         let unsubscribeSave: any = null;
-        if(props.postId) {
+        if(props.id && props.userUid) {
             unsubscribeComments = db
             .collection('posts')
-            .doc(props.postId)
+            .doc(props.id)
             .collection('comments')
             .orderBy('timestamp', 'asc')
             .onSnapshot(snapshot => {
@@ -65,43 +63,31 @@ const Post: React.FC<IPostProps> = (props) => {
             });
 
             unsubscribeLikes = db
-            .collection('posts')
-            .doc(props.postId)
-            .collection('likes')
-            .orderBy('timestamp', 'asc')
-            .onSnapshot(snapshot => {
-                setLikes(snapshot.docs.map(doc => {
-                    return {
-                        id: doc.id,
-                        username: doc.data().username,
-                        timestamp: doc.data().timestamp
-                    };
-                }));
+            .collection('user')
+            .doc(props.userUid)
+            .collection('like')
+            .doc(props.id)
+            .onSnapshot(doc => {
+                setLike(doc.exists);
             });
 
             unsubscribeSave = db
-            .collection('posts')
-            .doc(props.postId)
-            .collection('saved')
-            .where('username', '==', props.loggedUser)
-            .onSnapshot(snapshot => {
-                let auxSaved = snapshot.docs.map(doc => {
-                    return doc.id;
-                });
-                setSavedByUser(auxSaved[0]);
+            .collection('user')
+            .doc(props.userUid)
+            .collection('save')
+            .doc(props.id)
+            .onSnapshot(doc => {
+                setSave(doc.exists);
             });
+
         }
 
         return () => {
-            unsubscribeComments();
-            unsubscribeLikes();
-            unsubscribeSave();
+            if(unsubscribeComments) unsubscribeComments();
+            if(unsubscribeLikes) unsubscribeLikes();
+            if(unsubscribeSave) unsubscribeSave();
         }
-    }, [props.loggedUser, props.postId]);
-
-    useEffect(() => {
-        setLikeByUSer(likes.find(item => item.username === props.loggedUser)?.id);
-    }, [likes, props.loggedUser]);
+    }, [props.loggedUser, props.id, props.userUid]);
     
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setComment(event.target.value);
@@ -111,7 +97,7 @@ const Post: React.FC<IPostProps> = (props) => {
         event.preventDefault();
         db
         .collection('posts')
-        .doc(props.postId)
+        .doc(props.id)
         .collection('comments')
         .add({
             text: comment,
@@ -121,49 +107,60 @@ const Post: React.FC<IPostProps> = (props) => {
         setComment('');
     }
 
-    const controlLikeChange = () => {
-        if(props.loggedUser){
-            if(likedByUser) {
+    const changeLikeState = () => {
+        if(like) {
+            db
+            .collection('posts')
+            .doc(props.id)
+            .update({
+                likes: props.likes || 0 - 1
+            })
+            .then(() => {
                 db
-                .collection('posts')
-                .doc(props.postId)
-                .collection('likes')
-                .doc(likedByUser).delete();
-            } else {
+                .collection('user')
+                .doc(props.userUid)
+                .collection('like')
+                .doc(props.id).delete()
+            });
+        } else {
+            let amountLikes = props.likes || 0 + 1;
+            db
+            .collection('posts')
+            .doc(props.id)
+            .update({
+                likes: amountLikes
+            })
+            .then(() => {
                 db
-                .collection('posts')
-                .doc(props.postId)
-                .collection('likes')
-                .add({
-                    username: props.loggedUser,
+                .collection('user')
+                .doc(props.userUid)
+                .collection('like')
+                .doc(props.id)
+                .set({
+                    imageUrl: props.imageUrl,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-            }
-        } else {
-            props.snackInfo('You have to log in to like any post');
+            });
         }
     }
 
-    const controlSaveChange = () => {
-        if(props.loggedUser){
-            if(savedByUser) {
-                db
-                .collection('posts')
-                .doc(props.postId)
-                .collection('saved')
-                .doc(savedByUser).delete();
-            } else {
-                db
-                .collection('posts')
-                .doc(props.postId)
-                .collection('saved')
-                .add({
-                    username: props.loggedUser,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
+    const changeSaveState = () => {
+        if(save) {
+            db
+            .collection('user')
+            .doc(props.userUid)
+            .collection('save')
+            .doc(props.id).delete();
         } else {
-            props.snackInfo('You have to log in to save any post');
+            db
+            .collection('user')
+            .doc(props.userUid)
+            .collection('save')
+            .doc(props.id)
+            .set({
+                imageUrl: props.imageUrl,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
         }
     }
 
@@ -183,7 +180,7 @@ const Post: React.FC<IPostProps> = (props) => {
                 </Box>
                 <Box>
                     <Typography variant="subtitle2" color="textSecondary">
-                        { moment(props.time?.toDate()).fromNow() }
+                        { moment(props.timestamp?.toDate()).fromNow() }
                     </Typography>
                 </Box>
             </Box>           
@@ -196,8 +193,8 @@ const Post: React.FC<IPostProps> = (props) => {
             <Box display="flex" flexDirection="row">
                 <Box display="flex" flexDirection="row" flexGrow={1}>
                     <Box>
-                        <IconButton onClick={controlLikeChange}>
-                            { likedByUser ? (
+                        <IconButton id="like" onClick={changeLikeState}>
+                            { like ? (
                                 <FavoriteIcon className={classes.post__likes__liked}/>
                             ): (
                                 <FavoriteBorderIcon />
@@ -211,8 +208,8 @@ const Post: React.FC<IPostProps> = (props) => {
                     </Box>
                 </Box>
                 <Box>
-                    <IconButton onClick={controlSaveChange}>
-                        { savedByUser ? (
+                    <IconButton id="save" onClick={changeSaveState}>
+                        { save ? (
                             <BookmarkIcon />
                         ): (
                             <BookmarkBorderIcon />
@@ -221,7 +218,7 @@ const Post: React.FC<IPostProps> = (props) => {
                 </Box>
             </Box>
             <div className={classes.post__likes}>
-                <strong>{likes.length} {likes.length === 1 ? 'like':  'likes'}</strong>
+                <strong>{props.likes} {props.likes === 1 ? 'like':  'likes'}</strong>
             </div>
             
             <h4 className={classes.post__text}>

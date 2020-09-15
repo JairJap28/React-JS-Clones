@@ -3,23 +3,153 @@ import SavedProps, {
     ISavedStateToProps,
     ISavedActionsToProps
 } from './SavedProps';
+import useStyles from './Styles';
 
 // Redux
 import { connect } from 'react-redux'
 import { RootState } from '../../Redux/Store/index';
 import { changeOpenHelper } from '../../Redux/Actions/systemActions';
 
-export const Saved: React.FC<SavedProps> = (props) => {
+// Firebase
+import { db } from '../../Firebase/Firebase';
 
-    // if (!props.user) {
-    //     props.changeOpenHelper(true, 'SignIn');
-    // }
-    
+// Models
+import { IPost } from '../../Models/IPost';
+
+// MUI Stuff
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
 
     return (
-        <div>
-            <h1>Saved Posts</h1>    
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`photos`}
+            {...other}>
+            {value === index && (
+                <div>
+                    {children}
+                </div>
+            )}
         </div>
+    );
+}
+
+function a11yProps(index: any) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+export const Saved: React.FC<SavedProps> = (props) => {
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
+    const [liked, setLiked] = React.useState<Array<IPost>>([]);
+    const [saved, setSaved] = React.useState<Array<IPost>>([]);
+
+    useEffect(() => {
+        if(props.user) {
+            db
+            .collection('user')
+            .doc(props.user?.uid)
+            .collection('like')
+            .get()
+            .then((snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+                setLiked(snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        imageUrl: doc.data().imageUrl
+                    }
+                }));
+            });
+
+            db
+            .collection('user')
+            .doc(props.user?.uid)
+            .collection('save')
+            .get()
+            .then((snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+                setSaved(snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        imageUrl: doc.data().imageUrl
+                    }
+                }));
+            });
+        }
+    }, [props.user]);
+
+    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setValue(newValue);
+    };
+
+    return (
+        <Box>
+            <Box>
+                <Paper className={classes.saved__tabs}>
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        centered
+                    >
+                        <Tab label="Me gusta" {...a11yProps(0)}/>
+                        <Tab label="Guardado" {...a11yProps(1)}/>
+                    </Tabs>
+                    <TabPanel value={value} index={0}>
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            minHeight="100vh">
+                            <Grid container className={classes.like__container}>
+                                {liked && liked.map(post => (
+                                    <Grid item className={classes.like__item}>
+                                        <img
+                                            key={post.id}
+                                            className={classes.like__image}
+                                            src={post.imageUrl}
+                                            alt="Post" />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            minHeight="100vh">
+                            <Grid container className={classes.like__container}>
+                                {saved && saved.map(post => (
+                                    <Grid item className={classes.like__item}>
+                                        <img
+                                            key={post.id}
+                                            className={classes.like__image}
+                                            src={post.imageUrl}
+                                            alt="Post" />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    </TabPanel>
+                </Paper>
+            </Box>
+        </Box>
     )
 }
 

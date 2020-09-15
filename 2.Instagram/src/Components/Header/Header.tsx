@@ -1,5 +1,11 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import useStyles from './Styles';
+
+// Router
+import {
+    SAVED,
+    HOME
+} from '../../Config/Route/Routes';
 
 // Models
 import IHeaderPost, {
@@ -34,6 +40,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { withRouter } from 'react-router-dom';
 
 
 const StyledMenu = withStyles((theme) => ({
@@ -100,6 +107,14 @@ const Header: React.FC<IHeaderPost> = (props) => {
         setAnchorEl(event.currentTarget);
     };
 
+    const goToSaved = () => {
+        props.history.push(SAVED);
+    }
+
+    const goToHome = () => {
+        props.history.push(HOME);
+    }
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -115,8 +130,12 @@ const Header: React.FC<IHeaderPost> = (props) => {
                 className={classes.header__container}>
                 <Box flexGrow={1}>
                     <img
+                        style={{
+                            cursor: 'pointer'
+                        }}
                         src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
                         alt="Instagram Logo"
+                        onClick={goToHome}
                     />
                 </Box>
                 <Box >
@@ -155,7 +174,7 @@ const Header: React.FC<IHeaderPost> = (props) => {
                                         }}
                                         keepMounted>
 
-                                        <StyledMenuItem onClick={handleClose}>
+                                        <StyledMenuItem onClick={goToSaved}>
                                             <ListItemIcon>
                                                 <BookmarkBorderIcon fontSize="small" />
                                             </ListItemIcon>
@@ -187,4 +206,4 @@ const mapActionToProps: IHeaderActionsToProps = {
     changeOpenHelper
 };
 
-export default connect(mapStateToProps, mapActionToProps)(Header);
+export default withRouter(connect(mapStateToProps, mapActionToProps)(Header));

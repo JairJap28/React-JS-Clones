@@ -1,12 +1,9 @@
 import { SystemActionTypes } from '../../../Redux/Types';
+import { IPost } from '../../../Models/IPost';
 
-export interface IPostStateToProps {
-    postId: string,
-    username: string, 
-    imageUrl: string,
-    caption: string,
-    time: any,
-    loggedUser: string
+export interface IPostStateToProps extends IPost {
+    loggedUser: string,
+    userUid: string
 }
 
 export interface IPostActionToProps {

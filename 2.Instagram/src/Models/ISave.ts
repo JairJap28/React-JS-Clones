@@ -1,6 +1,6 @@
-interface ILike {
+interface ISave {
     postId: string,
     timestamp: any
 }
 
-export default ILike;
+export default ISave;

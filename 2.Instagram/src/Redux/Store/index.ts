@@ -14,7 +14,7 @@ import firebaseReducer from '../Reducers/firebaseReducer';
 
 const rootReducer = combineReducers({
     system: systemReducer,
-    firebase: firebaseReducer
+    firebase: firebaseReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -30,7 +30,9 @@ const composeEnhancers: typeof compose = composeWithDevTools({
 const store = createStore(
     rootReducer,
     composeEnhancers(
-        applyMiddleware(thunk)
+        applyMiddleware(
+            thunk,
+        )
     )
 );
 

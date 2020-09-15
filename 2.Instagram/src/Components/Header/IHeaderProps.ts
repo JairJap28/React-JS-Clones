@@ -3,6 +3,7 @@ import {
     SystemActionTypes, 
     FirebaseActionTypes 
 } from '../../Redux/Types';
+import { RouteComponentProps } from 'react-router-dom';
 
 export interface IHeaderStateToProps {
     user?: FirebaseUser
@@ -14,5 +15,8 @@ export interface IHeaderActionsToProps {
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes | undefined
 }
 
-type IHeaderPost = IHeaderStateToProps & IHeaderActionsToProps;
+//Child component related stuff
+interface ChildComponentProps extends RouteComponentProps<any> {}
+
+type IHeaderPost = IHeaderStateToProps & IHeaderActionsToProps & ChildComponentProps;
 export default IHeaderPost;

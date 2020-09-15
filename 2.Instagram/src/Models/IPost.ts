@@ -1,8 +1,10 @@
 
 export interface IPost {
     id: any,
-    username: string,
+    username?: string,
     imageUrl: string,
-    caption: string,
-    timestamp: any
+    caption?: string,
+    timestamp?: any,
+    likes?: number,
+    comments?: number
 }

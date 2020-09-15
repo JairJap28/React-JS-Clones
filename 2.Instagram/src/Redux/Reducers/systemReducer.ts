@@ -2,8 +2,6 @@ import {
     SystemActionTypes,
     CLEAR_UI,
     OPEN_HELPER,
-    LOG_OUT,
-    LOG_IN_SUCCESS,
     SNACKBAR_MESSAGE
 } from '../Types';
 

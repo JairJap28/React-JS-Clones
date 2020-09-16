@@ -6,6 +6,7 @@ import {
     SAVED,
     HOME
 } from '../../Config/Route/Routes';
+import { withRouter } from 'react-router-dom';
 
 // Models
 import IHeaderPost, {
@@ -40,8 +41,6 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { withRouter } from 'react-router-dom';
-
 
 const StyledMenu = withStyles((theme) => ({
     paper: {
@@ -49,6 +48,7 @@ const StyledMenu = withStyles((theme) => ({
         width: 150,
         position: 'relative',
         overflow: 'visible !important',
+        background: 'white',
         '&::before': {
             content: "''",
             width: 15,

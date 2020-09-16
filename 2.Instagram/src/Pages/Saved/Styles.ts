@@ -9,8 +9,11 @@ const useStyles = makeStyles((theme: ICustomTheme) => ({
         maxWidth: 1000
     },
     like__item: {
-        width: 293,
-        height: 293
+        maxWidth: 293,
+        maxHeight: 293,
+        width: '100%',
+        height: '100%',
+        margin: 15,
     },
     like__image: {
         width: '100%',

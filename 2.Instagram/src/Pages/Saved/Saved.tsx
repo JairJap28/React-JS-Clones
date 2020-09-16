@@ -10,6 +10,13 @@ import { connect } from 'react-redux'
 import { RootState } from '../../Redux/Store/index';
 import { changeOpenHelper } from '../../Redux/Actions/systemActions';
 
+// Router
+// Router
+import {
+    HOME
+} from '../../Config/Route/Routes';
+import { withRouter } from 'react-router-dom';
+
 // Firebase
 import { db } from '../../Firebase/Firebase';
 
@@ -36,7 +43,6 @@ function TabPanel(props: TabPanelProps) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`photos`}
             {...other}>
             {value === index && (
                 <div>
@@ -59,6 +65,7 @@ export const Saved: React.FC<SavedProps> = (props) => {
     const [value, setValue] = React.useState(0);
     const [liked, setLiked] = React.useState<Array<IPost>>([]);
     const [saved, setSaved] = React.useState<Array<IPost>>([]);
+    const [own, setOwn] = React.useState<Array<IPost>>([]);
 
     useEffect(() => {
         if(props.user) {
@@ -89,6 +96,21 @@ export const Saved: React.FC<SavedProps> = (props) => {
                     }
                 }));
             });
+
+            db
+            .collection('posts')
+            .where('username', '==', props.user.displayName)
+            .get()
+            .then((snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+                setOwn(snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        imageUrl: doc.data().imageUrl
+                    }
+                }));
+            });
+        } else {
+            props.history.push(HOME);
         }
     }, [props.user]);
 
@@ -107,23 +129,27 @@ export const Saved: React.FC<SavedProps> = (props) => {
                         textColor="primary"
                         centered
                     >
-                        <Tab label="Me gusta" {...a11yProps(0)}/>
-                        <Tab label="Guardado" {...a11yProps(1)}/>
+                        <Tab label="Mis publicaciones" {...a11yProps(0)}/>
+                        <Tab label="Me gusta" {...a11yProps(1)}/>
+                        <Tab label="Guardado" {...a11yProps(2)}/>
                     </Tabs>
                     <TabPanel value={value} index={0}>
                         <Box
                             display="flex"
                             justifyContent="center"
-                            alignItems="center"
                             minHeight="100vh">
-                            <Grid container className={classes.like__container}>
-                                {liked && liked.map(post => (
-                                    <Grid item className={classes.like__item}>
+                            <Grid 
+                                container
+                                className={classes.like__container}>
+                                {own && own.map(post => (
+                                    <Grid
+                                        key={post.id + '-1'}
+                                        item className={classes.like__item}>
                                         <img
-                                            key={post.id}
                                             className={classes.like__image}
                                             src={post.imageUrl}
                                             alt="Post" />
+                                        <div></div>
                                     </Grid>
                                 ))}
                             </Grid>
@@ -135,10 +161,30 @@ export const Saved: React.FC<SavedProps> = (props) => {
                             justifyContent="center"
                             minHeight="100vh">
                             <Grid container className={classes.like__container}>
-                                {saved && saved.map(post => (
-                                    <Grid item className={classes.like__item}>
+                                {liked && liked.map(post => (
+                                    <Grid 
+                                        key={post.id + '-2'}
+                                        item className={classes.like__item}>
                                         <img
-                                            key={post.id}
+                                            className={classes.like__image}
+                                            src={post.imageUrl}
+                                            alt="Post" />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            minHeight="100vh">
+                            <Grid container spacing={1} className={classes.like__container}>
+                                {saved && saved.map(post => (
+                                    <Grid 
+                                        key={post.id + '-3'}
+                                        item className={classes.like__item}>
+                                        <img
                                             className={classes.like__image}
                                             src={post.imageUrl}
                                             alt="Post" />
@@ -162,4 +208,4 @@ const mapDispatchToProps: ISavedActionsToProps = {
     changeOpenHelper
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Saved)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Saved))

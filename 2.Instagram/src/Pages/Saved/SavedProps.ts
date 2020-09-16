@@ -1,6 +1,7 @@
 import { User as FirebaseUser } from 'firebase';
 import { SystemActionTypes } from '../../Redux/Types';
 import IOpenHelper from '../../Models/UI/IOpenHelper';
+import { RouteComponentProps } from 'react-router-dom';
 
 export interface ISavedStateToProps {
     user?: FirebaseUser,
@@ -11,5 +12,7 @@ export interface ISavedActionsToProps {
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes
 }
 
-type SavedProps = ISavedStateToProps & ISavedActionsToProps;
+interface ChildComponentProps extends RouteComponentProps<any> {}
+
+type SavedProps = ISavedStateToProps & ISavedActionsToProps & ChildComponentProps;
 export default SavedProps;

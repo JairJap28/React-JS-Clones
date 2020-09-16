@@ -9,17 +9,21 @@ import ISignInProps,{
 } from './ISignInProps';
 
 // Firebase
-import { auth } from '../../../Firebase/Firebase';
+import { 
+    auth,
+} from '../../../Firebase/Firebase';
 import { User as FirebaseUser } from 'firebase';
 
 // Redux
 import { connect } from 'react-redux';
-import { 
-    logInSuccess,
+import {
     snackError,
     snackSuccess,
     changeOpenHelper
 } from '../../../Redux/Actions/systemActions';
+import {
+    logInSuccess
+} from '../../../Redux/Actions/firebaseActions';
 import { RootState } from '../../../Redux/Store/index';
 
 // MUI Stuff

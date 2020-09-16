@@ -1,5 +1,8 @@
 import { User as FirebaseUser } from 'firebase';
-import { SystemActionTypes } from '../../../Redux/Types';
+import { 
+    SystemActionTypes, 
+    FirebaseActionTypes 
+} from '../../../Redux/Types';
 import IOpenHelper from '../../../Models/UI/IOpenHelper';
 
 export interface ISignUpStateToProps {
@@ -7,7 +10,7 @@ export interface ISignUpStateToProps {
 }
 
 export interface ISignUpActionsToProps {
-    logInSuccess: (user: FirebaseUser) => SystemActionTypes,
+    logInSuccess: (user: FirebaseUser) => FirebaseActionTypes,
     snackError: (message: string) => SystemActionTypes,
     snackSuccess: (message: string) => SystemActionTypes,
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes

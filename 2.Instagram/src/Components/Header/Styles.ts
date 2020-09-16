@@ -9,8 +9,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         borderBottom: '1px solid lightgray',
         backgroundColor: theme.palette.common.white
     },
-    header__img__logo:{
-        
+    header__container: {
+        width: '100%',
+        maxWidth: 1000,
+        margin: 'auto'
     }
 }));
 

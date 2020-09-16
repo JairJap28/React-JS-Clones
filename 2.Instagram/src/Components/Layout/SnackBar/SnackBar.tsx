@@ -24,8 +24,8 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
     const classes = useStyles();
     const [state, setState] = React.useState<ISnackBarProps>({});
 
-    const vertical = 'top';
-    const horizontal = 'right';
+    const vertical = 'bottom';
+    const horizontal = 'center';
 
     useEffect(() => {
         setState({
@@ -48,7 +48,7 @@ export const SnackBar: React.FC<ISnackBar> = (props) => {
                 onClose={handleClose}
                 anchorOrigin={{ vertical, horizontal }}
                 key={vertical + horizontal}>
-                <Alert onClose={handleClose} severity={state.severity || "info"}>
+                <Alert onClose={handleClose} severity={state.severity}>
                     {state.message}
                 </Alert>
             </Snackbar>

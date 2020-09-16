@@ -1,15 +1,22 @@
 import { User as FirebaseUser } from 'firebase';
-import { SystemActionTypes } from '../../Redux/Types';
+import { 
+    SystemActionTypes, 
+    FirebaseActionTypes 
+} from '../../Redux/Types';
+import { RouteComponentProps } from 'react-router-dom';
 
 export interface IHeaderStateToProps {
     user?: FirebaseUser
 }
 
 export interface IHeaderActionsToProps {
-    logOut: () => SystemActionTypes | undefined,
+    logOut: () => FirebaseActionTypes | undefined,
     snackInfo: (message: string) => SystemActionTypes,
     changeOpenHelper: (state: boolean, component: string) => SystemActionTypes | undefined
 }
 
-type IHeaderPost = IHeaderStateToProps & IHeaderActionsToProps;
+//Child component related stuff
+interface ChildComponentProps extends RouteComponentProps<any> {}
+
+type IHeaderPost = IHeaderStateToProps & IHeaderActionsToProps & ChildComponentProps;
 export default IHeaderPost;

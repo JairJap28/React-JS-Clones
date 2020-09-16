@@ -1,11 +1,6 @@
-import { auth } from '../../Firebase/Firebase';
-import { User as FirebaseUser } from 'firebase';
-
 // Types
 import {
     CLEAR_UI,
-    LOG_OUT,
-    LOG_IN_SUCCESS,
     OPEN_HELPER,
     SNACKBAR_MESSAGE,
     SystemActionTypes
@@ -27,13 +22,6 @@ export function clearUI(): SystemActionTypes {
     }
 }
 
-export function logInSuccess(user: FirebaseUser): SystemActionTypes {
-    return {
-        type: LOG_IN_SUCCESS,
-        payload: user
-    }
-};
-
 export function snackError(message: string): SystemActionTypes {
     return snack(message, "error");
 }
@@ -54,12 +42,5 @@ function snack(message: string, type: string): SystemActionTypes {
             open: true,
             severity: type
         }
-    };
-}
-
-export function logOut(): SystemActionTypes {
-    auth.signOut();
-    return {
-        type: LOG_OUT
     };
 }

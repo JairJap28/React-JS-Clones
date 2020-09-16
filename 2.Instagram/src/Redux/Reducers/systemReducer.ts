@@ -2,8 +2,6 @@ import {
     SystemActionTypes,
     CLEAR_UI,
     OPEN_HELPER,
-    LOG_OUT,
-    LOG_IN_SUCCESS,
     SNACKBAR_MESSAGE
 } from '../Types';
 
@@ -27,16 +25,6 @@ function systemReducer(
             return {
                 ...state,
                 snackbar: action.payload
-            };
-        case LOG_IN_SUCCESS:
-            return {
-                ...state,
-                user: action.payload
-            };
-        case LOG_OUT:
-            return  {
-                ...state,
-                user: undefined
             };
         case OPEN_HELPER:
             return {

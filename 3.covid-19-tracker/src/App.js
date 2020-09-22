@@ -3,6 +3,7 @@ import React, {
   useEffect
 } from 'react';
 import axios from 'axios';
+import "leaflet/dist/leaflet.css";
 import './App.css';
 import { sortData } from './util';
 
@@ -19,7 +20,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 
-const baseURL = 'http://us-central1-covid-tracker-9e2b9.cloudfunctions.net/api/';
 const corsUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const App = () => {
@@ -28,9 +28,11 @@ const App = () => {
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 34.880746, lng: -40.4796});
+  const [mapZoom, setMapZoom] = useState(3);
 
   useEffect(() => {
-    axios.get(`${corsUrl}${baseURL}/all`)
+    axios.get(`${corsUrl}https://disease.sh/v3/covid-19/all`)
       .then(({ data }) => {
         setCountryInfo(data)
       })
@@ -38,7 +40,7 @@ const App = () => {
 
   useEffect(() => {
     const getCountriesData = async () => {
-      axios.get(`${corsUrl}${baseURL}/countries`)
+      axios.get(`${corsUrl}https://disease.sh/v3/covid-19/countries`)
       .then(({ data }) => {
         const countries = data.map((country) => (
               {
@@ -106,7 +108,7 @@ const App = () => {
             total={countryInfo.deaths} />
         </div>
 
-        <Map />
+        <Map center={mapCenter} zoom={mapZoom}/>
       </div>
       <Card className="app__right">
         <CardContent>
@@ -116,8 +118,6 @@ const App = () => {
             <h3>Worldwide new cases</h3>
             <LineGraph />
           </div>
-          
-          {/* Graph */}
         </CardContent>
       </Card>
     </div>

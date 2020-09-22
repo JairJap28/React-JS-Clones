@@ -1,0 +1,11 @@
+.infoBox {
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.infoBox__title,
+.infoBox__cases,
+.infoBox__total {
+    text-align: center;
+} 

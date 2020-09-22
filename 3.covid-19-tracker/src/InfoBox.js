@@ -1,4 +1,5 @@
 import React from 'react';
+import './InfoBox.css';
 
 // MUI
 import Card from '@material-ui/core/Card';

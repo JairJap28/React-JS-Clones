@@ -50,7 +50,6 @@ const options = {
     }
 }
 
-const baseURL = 'http://us-central1-covid-tracker-9e2b9.cloudfunctions.net/api/';
 const corsUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const LineGraph = ({ casesType = "cases" }) => {
@@ -76,7 +75,7 @@ const LineGraph = ({ casesType = "cases" }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            axios.get(`${corsUrl}${baseURL}/historical`)
+            axios.get(`${corsUrl}https://disease.sh/v3/covid-19/historical/all?lastdays=120`)
                 .then(({ data }) => {
                     const charData = buildCharData(data);
                     setData(charData);

@@ -24,11 +24,14 @@ const corsUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const App = () => {
 
+  const defaultCenter = { lat: 34.80746, lng: -40.4796};
+
   const [countries, setCountries] = useState([]);
+  const [mapCountries, setMapCountries] = useState([]);
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
-  const [mapCenter, setMapCenter] = useState({ lat: 34.880746, lng: -40.4796});
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [mapZoom, setMapZoom] = useState(3);
 
   useEffect(() => {
@@ -49,9 +52,10 @@ const App = () => {
               }
             ))
 
-            const sortedData = sortData(data);
+        const sortedData = sortData(data);
 
         setTableData(sortedData);
+        setMapCountries(data);
         setCountries(countries)
       })
     }
@@ -70,6 +74,13 @@ const App = () => {
     .then(({ data }) => {
       setCountryInfo(data)
       setCountry(countryCode);
+      try {
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(4);
+      } catch (error) {
+        setMapCenter(defaultCenter);
+        setMapZoom(3);
+      }
     })
   }
 
@@ -108,7 +119,7 @@ const App = () => {
             total={countryInfo.deaths} />
         </div>
 
-        <Map center={mapCenter} zoom={mapZoom}/>
+        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom}/>
       </div>
       <Card className="app__right">
         <CardContent>

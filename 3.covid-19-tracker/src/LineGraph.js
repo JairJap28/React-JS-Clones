@@ -2,6 +2,7 @@ import React, {
     useState,
     useEffect
 } from 'react';
+import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import numeral from 'numeral';
 
@@ -49,6 +50,8 @@ const options = {
     }
 }
 
+const baseURL = 'http://us-central1-covid-tracker-9e2b9.cloudfunctions.net/api/';
+const corsUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const LineGraph = ({ casesType = "cases" }) => {
     const [data, setData] = useState({});
@@ -73,9 +76,8 @@ const LineGraph = ({ casesType = "cases" }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
-                .then(response => response.json())
-                .then(data => {
+            axios.get(`${corsUrl}${baseURL}/historical`)
+                .then(({ data }) => {
                     const charData = buildCharData(data);
                     setData(charData);
                 })

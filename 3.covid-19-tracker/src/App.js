@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect
 } from 'react';
+import axios from 'axios';
 import './App.css';
 import { sortData } from './util';
 
@@ -18,6 +19,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 
+const baseURL = 'http://us-central1-covid-tracker-9e2b9.cloudfunctions.net/api/';
+const corsUrl = 'https://cors-anywhere.herokuapp.com/';
+
 const App = () => {
 
   const [countries, setCountries] = useState([]);
@@ -26,30 +30,28 @@ const App = () => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    fetch('https://disease.sh/v3/covid-19/all')
-    .then(response => response.json())
-    .then(data => {
-      setCountryInfo(data)
-    })
+    axios.get(`${corsUrl}${baseURL}/all`)
+      .then(({ data }) => {
+        setCountryInfo(data)
+      })
   }, []);
 
   useEffect(() => {
     const getCountriesData = async () => {
-      await fetch('https://disease.sh/v3/covid-19/countries')
-      .then((response) => response.json())
-      .then((data) => {
+      axios.get(`${corsUrl}${baseURL}/countries`)
+      .then(({ data }) => {
         const countries = data.map((country) => (
-          {
-            name: country.country,
-            value: country.countryInfo.iso2
-          }
-        ))
+              {
+                name: country.country,
+                value: country.countryInfo.iso2
+              }
+            ))
 
-        const sortedData = sortData(data);
+            const sortedData = sortData(data);
 
         setTableData(sortedData);
         setCountries(countries)
-      });
+      })
     }
 
     getCountriesData();
@@ -59,18 +61,15 @@ const App = () => {
     const countryCode = event.target.value;
 
     const url = countryCode === 'worldwide' ? 
-                'https://disease.sh/v3/covid-19/all' :
+                `https://disease.sh/v3/covid-19/all` :
                 `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
-    await fetch(url)
-    .then(response => response.json())
-    .then(data => {
+    await axios.get(`${corsUrl}${url}`)
+    .then(({ data }) => {
+      setCountryInfo(data)
       setCountry(countryCode);
-      setCountryInfo(data);
-    });
+    })
   }
-
-  console.log(countryInfo);
 
   return (
     <div className="app">

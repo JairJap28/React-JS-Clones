@@ -1,7 +1,41 @@
 .infoBox {
-    width: 100%;
-    margin-left: 10px;
-    margin-right: 10px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.infoBox:not(:last-child) {
+    margin-right: 20px;
+}
+
+.infoBox--selected {
+    border-top: 10px solid !important;
+}
+
+.infoBox__active {
+    background-color: #FFF2CC !important;
+    border: #D6B656 solid 1px;
+}
+
+.infoBox__active.infoBox--selected{
+    border-top-color: #D6B656;
+}
+
+.infoBox__recovered {
+    background-color: #D5E8D4 !important;
+    border: #82B366 solid 1px;
+}
+
+.infoBox__recovered.infoBox--selected{
+    border-top-color: #82B366;
+}
+
+.infoBox__deaths {
+    background-color: #F8CECC !important;
+    border: #B85450 solid 1px;
+}
+
+.infoBox__deaths.infoBox--selected{
+    border-top-color: #B85450;
 }
 
 .infoBox__title,

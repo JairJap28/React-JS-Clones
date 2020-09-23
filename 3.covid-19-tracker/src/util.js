@@ -25,6 +25,9 @@ export const sortData = (data) => {
     return sortedData.sort((a, b) => a.cases > b.cases ? -1 : 1);
 }
 
+export const prettyPrintStat = (stat) => 
+    stat ? `+${numeral(stat).format("0.0a")}` : "0"
+
 export const showDataOnMap = (data, casesType='cases') => (
     data.map(country => (
         <Circle
@@ -33,19 +36,21 @@ export const showDataOnMap = (data, casesType='cases') => (
             fillOpacity={0.4}
             color={casesTypeColor[casesType].hex}
             fillColor={casesTypeColor[casesType].hex}
+            weight={1}
             radius={
                 Math.sqrt(country[casesType]) * casesTypeColor[casesType].multiplier
             }>
             
-            <Popup>
+            <Popup className="info-container">
                 <div>
                     <div
+                        className="info-flag"
                         style={{ backgroundImage:`url(${country.countryInfo.flag})` }}
                     />
-                    <div>{country.country}</div>
-                    <div>Cases: {numeral(country.cases).format("0,0")}</div>
-                    <div>Recovered: {numeral(country.recovered).format("0,0")}</div>
-                    <div>Deaths: {numeral(country.deaths).format("0,0")}</div>
+                    <div className="info-name">{country.country}</div>
+                    <div className="info-confirmed">Cases: {numeral(country.cases).format("0,0")}</div>
+                    <div className="info-recovered">Recovered: {numeral(country.recovered).format("0,0")}</div>
+                    <div className="info-deaths">Deaths: {numeral(country.deaths).format("0,0")}</div>
                 </div>
             </Popup>
         </Circle>

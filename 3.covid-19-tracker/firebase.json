@@ -5,6 +5,7 @@
     ]
   },
   "hosting": {
+    "site": "covid-track",
     "public": "build",
     "ignore": [
       "firebase.json",

@@ -52,7 +52,7 @@ const options = {
 
 const corsUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const LineGraph = ({ casesType = "cases" }) => {
+const LineGraph = ({ casesType = "cases", ...props }) => {
     const [data, setData] = useState({});
 
     const buildCharData = (data) => {
@@ -86,7 +86,7 @@ const LineGraph = ({ casesType = "cases" }) => {
     }, [casesType]);
 
     return (
-        <div>
+        <div className={props.className}>
             { data?.length > 0 && (
                 <Line
                     data={{

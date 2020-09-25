@@ -1,0 +1,41 @@
+.infoBox {
+    flex: 1;
+    cursor: pointer;
+}
+
+.infoBox:not(:last-child) {
+    margin-right: 20px;
+}
+
+.infoBox__active {
+    background-color: #FFF2CC !important;
+    border: #D6B656 solid 1px;
+}
+
+.infoBox__active.infoBox--selected{
+    border-top: 10px solid #D6B656 !important;
+}
+
+.infoBox__recovered {
+    background-color: #D5E8D4 !important;
+    border: #82B366 solid 1px;
+}
+
+.infoBox__recovered.infoBox--selected{
+    border-top: 10px solid #82B366 !important;
+}
+
+.infoBox__deaths {
+    background-color: #F8CECC !important;
+    border: #B85450 solid 1px;
+}
+
+.infoBox__deaths.infoBox--selected{
+    border-top: 10px solid #B85450 !important;
+}
+
+.infoBox__title,
+.infoBox__cases,
+.infoBox__total {
+    text-align: center;
+} 

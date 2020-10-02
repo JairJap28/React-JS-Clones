@@ -7,14 +7,28 @@ import {
 } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
 
 // Reducers
 import systemReducer from '../Reducers/systemReducer';
 import firebaseReducer from '../Reducers/firebaseReducer';
 
+const persistConfig = {
+    key: 'root',
+    storage,
+}
+
+const userPersistConfig = {
+    key: 'user',
+    storage,
+    whitelist: ['firebase']
+}
+
 const rootReducer = combineReducers({
     system: systemReducer,
-    firebase: firebaseReducer,
+    firebase: persistReducer(userPersistConfig, firebaseReducer),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -27,8 +41,10 @@ const composeEnhancers: typeof compose = composeWithDevTools({
     // Specify name here, actionsBlacklist, actionsCreators and other options if needed
 });
 
-const store = createStore(
-    rootReducer,
+const pReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = createStore(
+    pReducer,
     composeEnhancers(
         applyMiddleware(
             thunk,
@@ -36,4 +52,4 @@ const store = createStore(
     )
 );
 
-export default store;
+export const persistor = persistStore(store);

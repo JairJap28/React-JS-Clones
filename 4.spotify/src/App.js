@@ -1,10 +1,13 @@
 import React from 'react';
 import './App.css';
 
+// Components
+import Login from './Login';
+
 function App() {
   return (
     <div className="App">
-      <h1>Hello Force of Code</h1>
+      <Login />
     </div>
   );
 }
